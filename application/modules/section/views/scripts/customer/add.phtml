@@ -1,0 +1,108 @@
+ <?php
+	$pageTitle ="បង្កើតអតិថិជន";
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+
+?>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $.widget( "custom.iconselectmenu", $.ui.selectmenu, {
+      _renderItem: function( ul, item ) {
+        var li = $( "<li>" ),
+          wrapper = $( "<div>", { text: item.label } );
+ 
+        if ( item.disabled ) {
+          li.addClass( "ui-state-disabled" );
+        }
+ 
+        $( "<span>", {
+          style: item.element.attr( "data-style" ),
+          "class": "ui-icon " + item.element.attr( "data-class" )
+        })
+          .appendTo( wrapper );
+        return li.append( wrapper ).appendTo( ul );
+      }
+    });
+ 
+   
+ 
+    $( "#people" )
+      .iconselectmenu()
+      .iconselectmenu( "menuWidget")
+        .addClass( "ui-menu-icons avatar" );
+  } );
+  </script>
+  <style>
+   
+ 
+    /* select with CSS avatar icons */
+    option.avatar {
+      background-repeat: no-repeat !important;
+      padding-left: 100px;
+    }
+	.ui-menu-icons .ui-menu-item-wrapper {
+		padding-left: 2em;
+		line-height: 50px;
+	}
+   
+  </style>
+
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title"><?php echo $pageTitle; ?></h5>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form id="form-submit" action="" method="POST" >
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-user"></i>
+								</span>
+								<input type="text" name="customerName" id="customerName" value="" class="form-control" placeholder="ឈ្មោះអតិថិជន" required="required" autocomplete="off">	
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-address-book"></i>
+								</span>
+								<input type="text" name="contactName" id="contactName" value="" class="form-control" placeholder="ឈ្មោះសម្រាប់ទំនាក់ទំនង" required="required" autocomplete="off">	
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+								   <i class="fa-solid fa-phone"></i>
+								</span>
+								<input type="text" name="contactTel" id="contactTel" value="" class="form-control" placeholder="ទូរស័ព្ទ" required="required" autocomplete="off">
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+								   <i class="fa-solid fa-map"></i>
+								</span>
+								<select name="people" id="people">
+									<option value="1" data-class="avatar" data-style="background-image: url('https://www.gravatar.com/avatar/b3e04a46e85ad3e165d66f5d927eb609?d=monsterid&amp;r=g&amp;s=16');">male</option>
+									<option value="2" data-class="avatar" data-style="background-image: url('https://www.gravatar.com/avatar/e42b1e5c7cfd2be0933e696e292a4d5f?d=monsterid&amp;r=g&amp;s=16');"><img src="https://www.gravatar.com/avatar/b3e04a46e85ad3e165d66f5d927eb609?d=monsterid&amp;r=g&amp;s=16">female</option>
+									<option value="3" data-class="avatar" data-style="background-image: url('https://www.gravatar.com/avatar/bdeaec11dd663f26fa58ced0eb7facc8?d=monsterid&amp;r=g&amp;s=16');">others</option>
+								</select>
+								<input type="text" name="address" id="address" value="" class="form-control" placeholder="អាសយដ្ឋាន" autocomplete="off">
+							</div>
+							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block">រក្សាទុក</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+		
+	  return true;
+	});
+});
+</script>
