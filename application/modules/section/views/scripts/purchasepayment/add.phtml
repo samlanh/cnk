@@ -1,0 +1,255 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("Add Purchase Payment");
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+	
+?>
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form id="form-submit" action="" method="POST" >
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('supplierId');?>
+							</div>
+							<div class="mb-3">
+								<table id="purchaseTable" class="table table-striped">
+									<thead>
+										<tr>
+										<th>
+											<input 
+											type="checkbox" 
+											id="checkAll" 
+											onchange="toggleAllRows(this)">
+										</th>
+										<th>#</th>
+										<th>Product</th>
+										<th>Paid</th>
+										<th>Balance</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+                  <tfoot>
+                        <tr>
+                            <td colspan="3" class="text-end">
+                                <strong>Previous Balance($)</strong></td>
+                            <td colspan="2">
+                                <?php echo $frm->getElement('previusBalance'); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total Expense($)</strong></td>
+                            <td colspan="2">
+                                <?php echo $frm->getElement('totalExpense'); ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Outstanding Balance($)</strong></td>
+                            <td colspan="2">
+                                <?php echo $frm->getElement('outstandingBalance'); ?>
+                            </td>
+                        </tr>
+                    </tfoot>
+								</table>
+								<input type="hidden" id="selectedPurchaseIds" name="purchaseIds" value="">
+								<input type="hidden" id="selectedRowIndexes" name="rowIndex" value="">
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('expenseDate');?>
+							</div>
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('bankId');?>
+							</div>
+              <div class="mb-3 form-input">
+								<?php echo $frm->getElement('note');?>
+							</div>
+							<button type="submit" class="btn btn-secondary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+		const supplierId = document.getElementById('supplierId').value;
+		if(supplierId==''){
+			alert("Select Supplier!");
+			return false;
+		}
+		const bankId = document.getElementById('bankId').value;
+		if(bankId==''){
+			alert("Select Bank!");
+			return false;
+		}
+    const selectedRowIndexes = document.getElementById('selectedRowIndexes').value;
+		if(selectedRowIndexes==''){
+			alert("Select Puschase!");
+			return false;
+		}
+	  return true;
+	});
+});
+
+function getPurchaseInfo() {
+  const supplierId = document.getElementById('supplierId').value;
+  const url = "<?php echo $this->baseUrl();?>/section/purchasepayment/get-purchase-info";
+
+  // Make an AJAX POST request
+  $.post(url, { supplierId: supplierId }, function (data) {
+    if (data) {
+      const tableBody = document.querySelector('#purchaseTable tbody'); // Select table body
+      tableBody.innerHTML = ''; // Clear existing rows
+
+      // Parse the JSON data
+      const purchases = JSON.parse(data);
+
+      // Append rows to the table dynamically
+      purchases.forEach((purchase, index) => {
+       
+        const row = `
+          <tr>
+            <td>
+              <input 
+                type="checkbox" 
+                class="row-check" 
+                data-purchase-id="${purchase.id}" 
+                data-row-index="${index + 1}" 
+                onchange="updateGrandTotalsAndPurchaseIds()">
+                <input 
+                  type="hidden" 
+                  class="form-control" 
+                  id="puchaseid_${index + 1}" 
+                  name="puchaseid_${index + 1}" 
+                  value="${purchase.id}" 
+                >
+            </td>
+            <td>${index + 1}</td>
+            <td>${purchase.productName}
+                <br>
+              <span class="totalPrice text-blue">$${purchase.totalbalance}</span>
+            </td>
+            <td>
+              <input 
+                type="text" 
+                value="${purchase.totalbalance}" 
+                class="form-control-sm totalpay" 
+                id="totalpay_${index + 1}" 
+                name="totalpay[]" 
+                placeholder="Total Paid" 
+                oninput="validateAndUpdate(this, ${purchase.outstandingBalanceAfter}, ${index + 1})"
+                style="width: 100%; font-weight: bold; color: red;" 
+                
+              >
+            </td>
+            <td>
+              <input 
+                type="text" 
+                class="form-control-sm  totalbalance" 
+                id="totalbalance_${index + 1}" 
+                name="totalbalance_${index + 1}" 
+				        value="0.00" 
+                 style="width: 100%; font-weight: bold; color: red;" 
+                readonly
+              >
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+        document.getElementById(`totalbalance_${index + 1}`).value = (purchase.totalPrice - purchase.totalPrice).toFixed(2);
+      });
+
+      // Update the grand totals and purchase IDs after loading data
+      updateGrandTotalsAndPurchaseIds();
+    }
+  });
+}
+
+// Function to toggle all rows
+function toggleAllRows(masterCheckbox) {
+  const isChecked = masterCheckbox.checked;
+  const rowCheckboxes = document.querySelectorAll('.row-check');
+
+  // Set all row checkboxes to match the master checkbox
+  rowCheckboxes.forEach(checkbox => {
+    checkbox.checked = isChecked;
+  });
+
+  // Update the grand totals and selected purchase IDs
+  updateGrandTotalsAndPurchaseIds();
+}
+
+// Function to validate totalpay and update totals
+function validateAndUpdate(input, maxTotalPrice, index) {
+  const value = parseFloat((input.value).replace(/,/g, '')) || 0;
+
+  // Check if totalpay exceeds totalprice
+  if (value > maxTotalPrice) {
+    alert(`Total Pay cannot exceed Total Price (${maxTotalPrice})!`);
+    input.value = maxTotalPrice; // Reset to the max allowed value
+  }
+
+  // Update the corresponding total balance
+  const totalBalanceInput = document.getElementById(`totalbalance_${index}`);
+  totalbalance = maxTotalPrice - parseFloat((input.value).replace(/,/g, ''));
+  totalBalanceInput.value = totalbalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  // Update the grand totals and selected purchase IDs
+  updateGrandTotalsAndPurchaseIds();
+}
+
+// Function to calculate and update the grand totals and selected purchase IDs
+function updateGrandTotalsAndPurchaseIds() {
+  const rows = document.querySelectorAll('#purchaseTable tbody tr');
+  let grandTotalPay = 0;
+  let grandTotalBalance = 0;
+  const selectedIds = [];
+  const selectedIndexes = [];
+
+  rows.forEach(row => {
+    const checkbox = row.querySelector('.row-check');
+    const isChecked = checkbox.checked;
+    const purchaseId = checkbox.getAttribute('data-purchase-id');
+    const rowIndex = checkbox.getAttribute('data-row-index');
+    const totalPayInput = row.querySelector('.totalpay');
+    const totalBalanceInput = row.querySelector('.totalbalance');
+
+
+    const payValue = parseFloat((totalPayInput.value).replace(/,/g, '')) || 0;
+    // Use 0 if value is empty or invalid
+    const balanceValue = parseFloat((totalBalanceInput.value).replace(/,/g, '')) || 0;
+
+    if (isChecked) {
+      grandTotalPay += payValue;
+      grandTotalBalance += balanceValue;
+      selectedIds.push(purchaseId);
+      selectedIndexes.push(rowIndex);
+    }
+  });
+
+  // Update the hidden inputs with the selected purchase IDs and indexes
+  document.getElementById('selectedPurchaseIds').value = selectedIds.join(',');
+  document.getElementById('selectedRowIndexes').value = selectedIndexes.join(',');
+
+  document.getElementById('previusBalance').value = grandTotalPay.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); 
+  document.getElementById('totalExpense').value = grandTotalPay.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","); 
+  document.getElementById('outstandingBalance').value = grandTotalBalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+</script>

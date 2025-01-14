@@ -1,0 +1,15 @@
+{
+  "background_color": "#40189d",
+  "description": "BK Operation App",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "assets/images/Logo.png",
+      "sizes": "200x200",
+      "type": "image/png"
+    }
+  ],
+  "name": "BK Operation App",
+  "short_name": "BK Operation",
+  "start_url": "/camappgit/appweb/public/"
+}

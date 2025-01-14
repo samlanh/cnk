@@ -1,0 +1,183 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	
+	
+	$pageTitle = $tr->translate("PURCHASE_PAYMENT");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+
+	$formSearch = $this->formSearch;
+	$voidUrl = $this->baseUrl()."/section/purchasepayment/void/id/";
+	$addUrl = $this->baseUrl()."/section/purchasepayment/add";
+
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+
+	//print_r($this->rs); exit();
+?>
+	<div class="page-content">
+		<div class="container pt-2"> 
+				<div class="filter-area m-0">
+					<div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div>
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+				</div>
+				<div class="list item-list recent-jobs-list">
+					<ul>
+						<?php
+						 if(!empty($this->rs)) { foreach($this->rs as $row) { 
+								$date = new DateTime($row["expenseDate"]);
+								$forDateMonth =  $date->format("M");
+								$forDateYear =  $date->format("Y");
+								$forDateDay =  $date->format("d");
+								$status=$statusClose;
+								if($row["isVoid"]==0){
+									$status=$statusCheck;
+								}
+							?>
+							<li>
+								<div class="item-content align-items-center justify-content-between pt-2">
+									<div>
+										<div class="d-flex align-items-center mb-0 ">
+											<i class="text-primary fa fa-university me-2"></i>
+											<small class="text-primary item-price"> <?php echo $row["supplierName"];?> </small>
+										</div>
+										<div class="d-flex align-items-center mb-0">
+											<i class="text-muted fa fa-wallet me-2"></i> <span class="text-muted text-truncate"><?php echo $row["accountNumber"]." / ".$row["accountName"];?></span>
+										</div>
+										<div class="d-flex align-items-center mb-0">
+											<i class="text-muted fa fa-file-lines me-2"></i> <span class="text-muted text-truncate"><?php echo empty($row["note"])?'___':$row["note"]; ?></span>
+										</div>
+									</div>
+									<div>
+										<div class="basic-dropdown">
+											<div class="dropdown">
+												<button type="button" class="btn btn-body dropdown-toggle" data-bs-toggle="dropdown">
+												   <i class="fa fa-ellipsis-v me-2"></i>
+												</button>
+												<div class="dropdown-menu">
+													<a class="dropdown-item" href="javascript:void(0);"><i class="text-primary fa fa-eye me-2"></i> <?php echo $tr->translate("VIEW");?></a>
+													<a class="dropdown-item" onclick="VoidForm('<?php echo $row['id']; ?>');" href="javascript:void(0);"><i class="text-primary fa fa-xmark me-2"></i> <?php echo $tr->translate("VOID");?></a>
+													
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="item-content align-items-center justify-content-between mb-2">
+									<div class="media-55 rounded-2 bg-primary d-flex justify-content-center align-items-center flex-column" >
+										<small class="item-title text-white lh-sm"><?php echo $forDateDay;?></small>
+										<small class="item-title text-white lh-sm"><?php echo $forDateMonth;?></small>
+										<small class="item-title text-white lh-sm" ><?php echo $forDateYear;?></small>
+									</div>
+									<div class="row m-0" style="width:100%;">
+										<div class="col-8">
+											<div class="d-flex align-items-center mb-0">
+												<div class="item-price text-red fw-bold"> $ <?php echo str_replace(".00","",number_format($row["totalExpense"],2));?></div>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												<?php echo $tr->translate("balanceDue");?>
+												<div class="item-price text-red ms-2"> $ <?php echo str_replace(".00","",number_format($row["outstandingBalance"],2));?></div>
+											</div>
+										</div>
+										<div class="col-4 d-flex justify-content-around  align-items-end align-content-center  flex-column">
+											<div>
+												<?php echo $status;?>
+											</div>
+											
+										</div>
+									</div>
+								</div>
+								<div class="sortable-handler"></div>
+							</li>
+						<?php }}?>
+				   </ul>
+				</div>
+				<!-- Job List -->                    
+			</div>    
+		</div>
+	</div>
+	<div class="modal modal-bottom fade" id="basicModal"  aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-user"></i>
+								</span>
+								<?php echo $formSearch->getElement('supplierId');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-money-bill"></i>
+								</span>
+								<?php echo $formSearch->getElement('isVoid');?>
+							</div>	
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+
+function VoidForm(index) {
+	//alert(index);
+	url='<?php echo $this->baseUrl()."/section/purchasepayment/void/id/";?>';
+    const confirmed = confirm("Are you sure you want to void this Payment?"); 
+    if (confirmed) {
+		 if(index!=''){
+			window.location.href = url+index;
+		}else{
+			alert('Please select record you want to copy');
+			return false;
+		}
+    }
+    return false;
+}
+</script>
+

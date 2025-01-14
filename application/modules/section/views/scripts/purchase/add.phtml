@@ -1,0 +1,127 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("ADD_PURCHASE");
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+	
+?>
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'purchase','action'=>'add')); ?>" method="POST" >
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('supplierId');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-calendar-days"></i>
+								</span>
+								<?php echo $frm->getElement('poDate');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-file-invoice"></i>
+								</span>
+								<?php echo $frm->getElement('purchaseNo');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-file-invoice"></i>
+								</span>
+								<?php echo $frm->getElement('invoiceNo');?>
+							</div>
+							<div class="mb-3 form-input">
+								<select class="form-control-select" name="productId" id="productId" onchange="calculateTotalPrice()">
+ 										<option value=""><?php echo $tr->translate("Select Product"); ?></option>
+									<?php if(!empty($this->product)){ foreach($this->product as $key=>$value){ ?>
+										<option  data-record-info="<?php echo htmlspecialchars(Zend_Json::encode($value)) ?>"  value="<?php echo $value['id'] ?>" ><?php echo  htmlspecialchars($value['name']) ?></option>
+									<?php }} ?>
+								</select>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-gas-pump"></i>
+								</span>
+								<?php echo $frm->getElement('qty');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('unitPrice');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('totalPrice');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('litterPrice');?>
+							</div>
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('note');?>
+							</div>
+							<button type="submit" class="btn btn-secondary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+		const supplierId = document.getElementById('supplierId').value;
+		if(supplierId==''){
+			alert("Select Supplier!");
+			return false;
+		}
+		const productId = document.getElementById('productId').value;
+		if(productId==''){
+			alert("Select Product!");
+			return false;
+		}
+	  return true;
+	});
+});
+
+function calculateTotalPrice() {
+
+	const productId = document.getElementById('productId').value;
+	if(productId==''){
+		document.getElementById('totalPrice').value = 0.00;
+		document.getElementById('litterPrice').value = 0.00;
+	}else{
+		const selectElement = document.getElementById('productId');
+		const selectedOption = selectElement.options[selectElement.selectedIndex];
+		// Retrieve the data-record-info attribute from the selected option
+		const recordInfo = selectedOption.getAttribute('data-record-info');
+		// Parse the JSON string into a JavaScript object
+		const recordData = JSON.parse(recordInfo);
+
+		const litterUnit = parseFloat(recordData.litterUnit) || 1;
+		const qty = parseFloat(document.getElementById('qty').value) || 0;
+		const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
+		
+		const totalPrice = (qty/litterUnit) * unitPrice;
+		const litterPrice = unitPrice/litterUnit ;
+		document.getElementById('totalPrice').value = totalPrice.toFixed(2);
+		document.getElementById('litterPrice').value = litterPrice.toFixed(2);
+	}
+}
+</script>

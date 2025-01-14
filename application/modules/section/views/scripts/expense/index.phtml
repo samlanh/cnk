@@ -1,0 +1,140 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	
+	$pageTitle = $tr->translate("EXPENSE");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$formSearch = $this->formSearch;
+	$urlEdit = $this->baseUrl() . "/section/expense/edit/id/";
+	
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+?>
+	<div class="container fb p-t0">
+		<div class="serach-area">
+			<div class="filter-area">
+					<div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div>
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+				</div>
+			<div class="list item-list recent-jobs-list">
+				<?php if(!empty($this->rows)){  ?>
+					<ul>
+						<?php 
+							$i=0;
+							foreach($this->rows AS $rs){
+								$i++;
+								$date = new DateTime($rs["forDate"]);
+								$forDateMonth =  $date->format("M");
+								$forDateYear =  $date->format("Y");
+								$forDateDay =  $date->format("d");
+								
+								$status=$statusClose;
+								if($rs["status"]==1){
+									$status=$statusCheck;
+								}
+						?>
+						<li>
+							<div class="item-content align-items-center justify-content-between">
+								<div class="media-55 rounded-2 bg-danger d-flex justify-content-center align-items-center flex-column" >
+									<small class="item-title text-white lh-sm"><?php echo $forDateDay;?></small>
+									<small class="item-title text-white lh-sm"><?php echo $forDateMonth;?></small>
+									<small class="item-title text-white lh-sm" ><?php echo $forDateYear;?></small>
+								</div>
+								<div class="row m-0" style="width:100%;">
+										<div class="col-8">
+											<div class="item-title-row mb-0">
+												<div class="item-subtitle"><?php echo $rs["cateTitle"];?></div>
+												<span class="text-primary text-truncate"><?php echo $rs["title"];?></span>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												<i class="text-primary fa fa-wallet me-2"></i>
+												<small class="item-price"> <?php echo $rs["accountNumber"];?> <?php echo empty($rs["accountName"]) ? "" : " / ".$rs["accountName"];?></small>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												<i class="text-primary fa fa-coins me-2"></i>
+												<div class="item-price text-red"> USD <?php echo str_replace(".00","",number_format($rs["totalAmount"],2));?></div>
+											</div>
+											
+										</div>
+										<div class="col-4 p-0 d-flex justify-content-around  align-items-end align-content-center  flex-column">
+											<div>
+												<?php echo $status;?>
+												<a  title="<?php echo $tr->translate("EDIT");?>" class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
+												<i class="fa fa-edit"></i>
+												</a>
+											</div>
+										</div>
+									</div>
+							</div>
+							<div class="sortable-handler"></div>
+						</li>
+						<?php } ?>
+						
+				   </ul>
+			   <?php } ?>
+			</div>
+		</div>
+	</div>
+	<div class="modal modal-bottom fade" id="basicModal" aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list"></i>
+								</span>
+								<?php echo $formSearch->getElement('categoryId');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+
+</script>
