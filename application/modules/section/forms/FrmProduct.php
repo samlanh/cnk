@@ -72,6 +72,13 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 		}
 		$materialId->setMultiOptions($optSup);
 
+		$measure = new Zend_Form_Element_Text("measure");
+		$measure->setAttribs(array(
+			'class'=>'form-control',
+			'placeholder'=>$this->tr->translate("ខ្នាត"),
+			'autocomplete'=>'off'
+		));
+
 		$id = new Zend_Form_Element_Hidden("id");
     	
     	if(!empty($data)){
@@ -79,6 +86,7 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
     		$outstandingQty->setValue($data["outstandingQty"]);
     		$costPrice->setValue($data["costPrice"]);
     		$proType->setValue($data["proType"]);
+    		$measure->setValue($data["measure"]);
     		$id->setValue($data["id"]);
     	}
     	
@@ -88,7 +96,8 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 				$outstandingQty,
 				$costPrice,
 				$proType,
-				$materialId ,
+				$materialId,
+				$measure,
 				$id
     			
     		));

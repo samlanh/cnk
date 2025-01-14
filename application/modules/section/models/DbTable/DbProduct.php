@@ -27,17 +27,32 @@
 		$db = $this->getAdapter();
 		try{
 	  		$arr = array(
-	  				'productName'	=> $_data['productName'],
-	  				'proType'		=> $_data['proType'],
-	  				'outstandingQty'=> $_data['outstandingQty'],
-	  				'costPrice'		=> $_data['costPrice'],
-	  				'createDate' 	=> date("Y-m-d"),
-	  				'status'		=> 1,
-					'userId'		=> $this->getUserId()
+				'productName'	=> $_data['productName'],
+				'proType'		=> $_data['proType'],
+				'outstandingQty'=> $_data['outstandingQty'],
+				'costPrice'		=> $_data['costPrice'],
+				'measure'		=> $_data['measure'],
+				'createDate' 	=> date("Y-m-d"),
+				'status'		=> 1,
+				'userId'		=> $this->getUserId()
 	  		);
 			 
 			$this->_name="ie_product";
-			$this->insert($arr);
+			$id = $this->insert($arr);
+			//
+			if($_data['selectedIndexes']!=""){
+				$ids=explode(',',$_data['selectedIndexes']);
+				foreach ($ids as $i)
+				{
+					$arrMaterial = array(
+						'productId'	 => $id,
+						'materialId' => $_data['id_'.$i],
+						'usageQty'   => $_data['quantity_'.$i],
+					);
+					$this->_name="ie_product_material";
+					$this->insert($arrMaterial);
+				 }
+			}
 		}catch (Exception $e){
 			$db->rollBack();
 			Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
