@@ -1,0 +1,42 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+
+	$pageTitle = $tr->translate("USER_ACCESS");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$urlEdit = $this->baseUrl() . "/setting/useraccess/add/id/";
+?>
+
+<div class="container fb">
+	<!-- row -->
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="card-title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body py-2">
+					<?php if(!empty($this->userType)){?>
+					<div class="dz-list">
+						<ul>
+							<?php $i=0; foreach($this->userType AS $rs){ $i++;?>
+							<li>
+								<a href="<?php echo $urlEdit.$rs["userTypeId"]; ?>" class="item-content item-link">
+									<div class="dz-icon bg-primary light">
+										<?php echo $i;?>                                  
+									</div>
+									<div class="dz-inner">
+										<span class="dz-title"><?php echo $rs["userTypeTitle"];?></span>
+									</div>
+								</a>
+							</li>
+							<?php } ?>
+						</ul>
+						<?php } ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>   
+</div>

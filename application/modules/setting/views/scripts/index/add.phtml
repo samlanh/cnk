@@ -1,0 +1,114 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+
+	$pageTitle = $tr->translate("CREATE_USER");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+?>
+
+<div class="container fb">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				<h5 class="title"><?php echo $pageTitle;?></h5>
+			</div>
+			<div class="card-body">
+				<div class="basic-form">
+					<form id="form-submit" method="POST">
+						<div class="mb-3 form-input">
+							<span class="input-icon">
+							   <i class="fa fa-signature"></i>
+							</span>
+							<?php echo $frm->getElement('firstName');?>
+							<?php echo $frm->getElement('isDuplicate');?>
+						</div>
+						<div class="mb-3 form-input">
+							<span class="input-icon">
+							   <i class="fa fa-id-card"></i>
+							</span>
+							<?php echo $frm->getElement('lastName');?>
+						</div>
+						<div class="mb-0 input-group">
+							<small id="message" class="text-danger"></small>
+						</div>
+						<div class="mb-3 form-input">
+							<span class="input-icon">
+							   <i class="fa fa-user"></i>
+							</span>
+							<?php echo $frm->getElement('userName');?>
+						</div>
+						<div class="mb-3 input-group">
+							<?php echo $frm->getElement('password');?>
+							<span class="input-group-text show-pass show-pass-control"> 
+								<i class="fa fa-eye-slash"></i>
+								<i class="fa fa-eye"></i>
+							</span>
+						</div>
+						<div class="mb-3 form-input">
+							<span class="input-icon">
+								<i class="fa fa-sitemap"></i>
+							</span>
+							<?php echo $frm->getElement('userType');?>
+						</div>
+						<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+		var userName = $('#userName').val();
+		if(userName == null || userName==""){
+			showToastMessage("<?php echo $tr->translate("userNameIsRequired");?>");
+			$('#userName').focus();
+			return false;
+		}
+		var isDuplicate = $('#isDuplicate').val();
+		if (isDuplicate == 1) {
+			$('#userName').focus();
+			return false;
+		}
+					
+		var userType = $('#userType').val();
+		if(userType == null || userType==0){
+			showToastMessage("<?php echo $tr->translate("userTypeIsRequired");?>");
+			$('#userType').focus();
+			return false;
+		}
+		loading();
+		return true;
+	});
+});
+
+function checkDuplicateUser(){
+	var userName = $('#userName').val();
+	if (userName == '') {
+		return false;
+	}
+	var urlCheckTitle = '<?php echo $this->url(array('module' => 'setting', 'controller' => 'index', 'action' => 'check-title')); ?>';
+	$.post( 
+		urlCheckTitle, 
+		{ 
+		'userName': userName, 
+		},
+	    function( data ) {
+			if (data !== "0") {
+				$("#message").html('<?php echo '<i class="fa fa-exclamation-triangle" ></i> ' . $tr->translate("USER_EXISTING_READY"); ?>');
+				$('#userName').focus();
+				$('#isDuplicate').val(1);
+			} else {
+				$("#message").html('');
+				$('#isDuplicate').val(0);
+			}
+	      }
+	    );
+}
+</script>

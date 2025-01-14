@@ -1,0 +1,144 @@
+<?php 
+$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+
+$request=Zend_Controller_Front::getInstance()->getRequest();
+$action=$request->getActionName();
+$controller=$request->getControllerName();
+$module=$request->getModuleName();
+	
+$key = new Application_Model_DbTable_DbKeycode();
+$dataInfo=$key->getKeyCodeMiniInv(TRUE);
+
+$defaultLogo = $this->baseUrl()."/images/Logo.png";
+if(!empty($dataInfo['logo'])){
+	if (file_exists(PUBLIC_PATH."/images/logo/".$dataInfo['logo'])){
+		$defaultLogo = $this->baseUrl().'/images/logo/'.$dataInfo['logo'];
+	}
+}
+
+
+$zendRequest = new Zend_Controller_Request_Http();
+$userID = $zendRequest->getCookie(SYSTEM_SES.'userID');
+$userID = empty($userID) ? 0 : $userID;
+$userName = "";
+
+$dbUser = new Application_Model_DbTable_DbUsers();
+$userInfo = $dbUser->getUserInformationById($userID);
+if(!empty($userInfo)){
+	$lastName = empty($userInfo["last_name"]) ? "" : " ".$userInfo["last_name"];
+	$firstName = empty($userInfo["first_name"]) ? "" : $userInfo["first_name"];
+	
+	$userName = $firstName.$lastName;
+}
+
+$sessionUser= new Zend_Session_Namespace(SYSTEM_SES);
+$arrModule = $sessionUser->arrAcl;
+if(empty($arrModule)){
+	$arrAcl = $dbUser->getArrAcl($userInfo['user_type']);
+	$arrModule = array();
+	if(!empty($arrAcl)){
+		for ($i = 0; $i < count($arrAcl); $i++) {
+			$arrModule[$i] = $arrAcl[$i]['module'];
+		}
+	}
+	$arrModule = (array_unique($arrModule));
+	$sessionUser = new Zend_Session_Namespace(SYSTEM_SES);
+	$sessionUser->arrAcl = $arrAcl;
+	$sessionUser->arrModule = $arrModule;
+	
+	$arrModule = $arrAcl;
+}
+
+
+$arrayIcon = array(
+	'DASHBOARD'=>'<i class="fa fa-home"></i>',
+	'BANK'=>'<i class="fa fa-building"></i>',
+	'REVENUE'=>'<i class="fa fa-hand-holding-dollar"></i>',
+	'EXPENSE'=>'<i class="fa fa-money-bill"></i>',
+	'PURCHASE'=>'<i class="fa fa-cart-shopping"></i>',
+	'PURCHASE_PAYMENT'=>'<i class="fa fa-dollar"></i>',
+	'CATEGORY'=>'<i class="fa fa-list"></i>',
+	'SUPPLIER'=>'<i class="fa fa-truck"></i>',
+	'PRODUCT'=>'<i class="fa fa-cubes"></i>',
+	'REPORT'=>'<i class="fa fa-file-lines"></i>',
+	'USERS'=>'<i class="fa fa-users"></i>',
+	'USER_TYPE'=>'<i class="fa fa-sitemap"></i>',
+	'USER_ACCESS'=>'<i class="fa fa-cogs"></i>',
+);
+?>
+
+  <!-- Sidebar -->
+    <div class="sidebar">
+		<div class="author-box">
+			<div class="dz-media">
+				<img src="<?php echo $this->baseUrl()."/images/"; ?>/user.png" class="rounded-circle" alt="author-image">
+			</div>
+			<div class="dz-info">
+				<span><?php echo $tr->translate("WELCOME"); ?></span>
+				<h5 class="name"><?php echo $userName; ?></h5>
+			</div>
+		</div>
+		<ul class="nav navbar-nav">	
+			
+			<?php 
+			$showLabelSetting=0;
+			if(!empty($arrModule)) foreach($arrModule as $key => $row){ 
+				$menuTitle = $tr->translate(strtoupper($row["label"]));
+				$urlMenu = $this->url(array('module'=>$row["module"],'controller'=>$row["controller"],'action'=>$row["action"]), null, true);
+				$icon = empty($arrayIcon[$row["label"]]) ? '<i class="fa fa-laptop"></i>' : $arrayIcon[$row["label"]];
+				$iconBg = "bg-primary";
+				
+				$iconBg = ($row["module"]=="setting") ? "bg-warning" : $iconBg;
+			?>
+			<?php if($key==0){?>
+				<li class="nav-label"><?php echo $tr->translate("MAIN_MENU"); ?></li>
+			<?php }?>
+			<?php if($row["module"]=="setting" AND $showLabelSetting==0){ 
+				$showLabelSetting=1;?>
+				<li class="nav-label"><?php echo $tr->translate("SETTINGS"); ?></li>
+			<?php }?>
+			<li>
+				<a class="nav-link" href="<?php echo $urlMenu; ?>">
+					<span class="dz-icon <?php echo $iconBg; ?> light">
+						<?php echo $icon; ?>
+					</span>
+					<span><?php echo $menuTitle; ?></span>
+				</a>
+			</li>
+			<?php }?>
+			<li>
+				<a class="nav-link" href="<?php echo $this->baseUrl()."/setting/index/changepassword"; ?>">
+					<span class="dz-icon bg-warning light">
+						<i class="fa fa-sign-out"></i>
+					</span>
+					<span><?php echo $tr->translate("CHANGE_PASSWORD"); ?></span>
+				</a>
+			</li>
+			<li>
+				<a class="nav-link" href="<?php echo $this->baseUrl()."/index/logout?value=1"?>">
+					<span class="dz-icon bg-warning light">
+						<i class="fa fa-sign-out"></i>
+					</span>
+					<span><?php echo $tr->translate("LOGOUT"); ?></span>
+				</a>
+			</li>
+            <li>
+                <div class="mode">
+                    <span class="dz-icon bg-warning light">
+                        <i class="fa-solid fa-moon"></i>
+                    </span>					
+                    <span><?php echo $tr->translate("DARK_MODE"); ?></span>
+                    <div class="custom-switch">
+                        <input type="checkbox" class="switch-input theme-btn" id="toggle-dark-menu">
+                        <label class="custom-switch-label" for="toggle-dark-menu"></label>
+                    </div>
+                </div>
+            </li>
+		</ul>
+		<div class="sidebar-bottom text-center">
+			<p><?php echo $tr->translate("Developed By"); ?></p>
+			<h6 class="name text-primary"><?php echo $tr->translate("CAMAPP_TECHNOLOGY"); ?></h6>
+			
+        </div>
+    </div>
+    <!-- Sidebar End -->

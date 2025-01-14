@@ -1,0 +1,124 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	
+	$userTypeInfo = $this->userTypeInfo;
+	$title = empty($userTypeInfo["userTypeTitle"]) ? "" : $userTypeInfo["userTypeTitle"];
+	
+	$pageTitle = $tr->translate("USER_ACCESS");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+?>
+
+<div class="container fb">
+	<div class="row ">
+		<div class="col s12 pad-0">
+			<h5 class="bot-20 sec-tit d-flex justify-content-between ">
+				<span><i class="fa fa-gears me-1"></i><?PHP echo $pageTitle;?></span> 
+				<strong class="text-primary"><?php echo $title;?></strong>
+			</h5>  
+
+			<?php 
+				$menuTabs="";
+				$tabContent="";
+				$oldModule = "";
+				if(!empty($this->aclList)){
+					foreach ($this->aclList as $key=>$rs){
+						
+						if($oldModule != $rs['module']){
+							$active="";
+							if($key==0){
+								
+								$active="active";
+								$tabContent.='
+								<div id="tabs-'.$rs['module'].'" class="col-12 content-tab-max-h active">
+									<div class="dz-list data-list">
+										<ul>';
+							}
+							$menuTabs.='
+							<li class="tab "><a href="#tabs-'.$rs['module'].'" class="'.$active.' text-primary">'.$tr->translate(strtoupper($rs['module'])).'</a></li>
+							';
+							
+							if($key>0){
+								$tabContent.='
+										</ul>
+									</div>
+								</div>
+								<div id="tabs-'.$rs['module'].'" class="col-12 content-tab-max-h">
+									  <div class="dz-list data-list">
+										<ul>';
+							}
+							
+							
+						}
+						$space="";
+						$classStyle="bg-light text-primary";
+						$actionStatus = $statusClose;
+						if($rs['isAvailable']>0){
+							$actionStatus = $statusCheck;
+						}
+						if($rs['is_menu'] != 1){
+							$classStyle="";
+							$space="&nbsp;&nbsp;&nbsp;";
+						}
+						$tabContent.='
+							<li>
+								<a href="javascript:void(0);" class="'.$classStyle.' text-primary rounded-2 p-2 item-content item-link">
+									<div class="dz-inner d-flex align-items-center w-100">
+										<div class="dz-title flex-1">'.$space.$tr->translate(($rs['label'])).'</div>
+										<div onClick="changeStatus('.$rs['acl_id'].','.$this->userTypeId.','.$rs['isAvailable'].')" id="status'.$rs['acl_id'].'">'.$actionStatus.'</div>
+									</div>
+								</a>
+							</li>
+						';
+						$oldModule = $rs['module'];
+					}
+					
+					$tabContent.="
+								</ul>
+							</div>
+						</div>
+					";
+				}
+			?>			
+			<div class="row">
+				<div class="col-3 p-0">
+					  <ul class="tabs tabs-verticle-list">
+						<?php echo $menuTabs;?>
+					  </ul>
+				</div>
+				<div class="col-9">
+					<div class="row">
+						<?php echo $tabContent;?>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+    </div>
+</div>
+
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+
+	function changeStatus(id, userType,status){
+		url = "<?php echo $this->baseUrl();?>/setting/useraccess/update-status";
+		$.post( 
+			url, { 'acl_id': id, 'status': status, 'user_type_id':userType},
+	      function( data ) {
+			  if( data !=""  ){
+				if( status > 0){
+					$("#status" + id).html('<?php echo $statusClose;?>');
+				}else{
+					$("#status" + id).html('<?php echo $statusCheck;?>');
+				}
+			  }
+	      }
+	    );
+	}
+</script>

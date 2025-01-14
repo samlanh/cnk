@@ -1,0 +1,70 @@
+<?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage(1);
+	
+	$baseUrl = Application_Form_FrmMessage::getUrl("/");
+	
+	$key = new Application_Model_DbTable_DbKeycode();
+	$dataInfo=$key->getKeyCodeMiniInv(TRUE);
+	
+	$dbGb = new Application_Model_DbTable_DbGlobal();
+	$currentLang = $dbGb->currentlang();
+	
+	$clientTitle= $tr->translate("CUSTOMER_BRANCH");
+	if(!empty($dataInfo['power_by'])){
+		$clientTitle= $dataInfo['power_by'];
+	}
+	
+	$defaultLogo = $this->baseUrl()."/images/Logo.png";
+	
+	$this->headTitle($tr->translate("SIGN_IN")." | ".$clientTitle); 
+	echo $this->headTitle();
+	
+	
+
+$allLang = $this->allLang;
+?>
+<!-- Banner -->
+        <div class="banner-wrapper shape-1">
+            <div class="container inner-wrapper">
+                <h2 class="dz-title"><?php echo $tr->translate("SIGN_IN"); ?></h2>
+                <p class="mb-0"><?php echo $tr->translate("SIGN_IN_DESC"); ?></p>
+            </div>
+        </div>
+        <!-- Banner End -->
+        
+        <div class="container">
+			<div class="account-area">
+				<form class="" method="POST" >
+					<div class="input-group">
+						<input type="text" placeholder="<?php echo $tr->translate("USER_NAME"); ?>" class="form-control" id="userName" name="userName" >
+					</div>
+					<div class="input-group">
+						<input type="password" placeholder="<?php echo $tr->translate("PASSWORD"); ?>" class="form-control be-0" id="capp-password" name="password">
+						<span class="input-group-text show-pass"> 
+							<i class="fa fa-eye-slash"></i>
+							<i class="fa fa-eye"></i>
+						</span>
+					</div>
+					<div class="input-group">
+						<button type="submit" class="btn btn-primary w-100"><?php echo $tr->translate("LOGIN"); ?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

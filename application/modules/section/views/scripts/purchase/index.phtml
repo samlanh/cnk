@@ -1,0 +1,178 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	
+	$pageTitle = $tr->translate("PURCHASE");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+
+	$formSearch = $this->formSearch;
+	$editUrl = $this->baseUrl()."/section/purchase/edit/id/";
+	$addUrl = $this->baseUrl()."/section/purchase/add";
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+
+	$unpaid = '<span class="badge badge-circle badge-danger "><i class="fa fa-rectangle-xmark"></i></span>';
+	$paid = '<span class="badge badge-circle badge-success"><i class="fa fa-money-bill"></i></span>';
+?>
+	<div class="page-content">
+		<div class="container pt-2"> 
+				<div class="filter-area m-0">
+					<div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div>
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+				</div>
+			
+				<div class="list item-list recent-jobs-list">
+					<ul>
+						<?php
+						$i=0;	
+
+						 if(!empty($this->rs)) { foreach($this->rs as $row) { 
+							$i++;
+							$date = new DateTime($row["poDate"]);
+							$forDateMonth =  $date->format("M");
+							$forDateYear =  $date->format("Y");
+							$forDateDay =  $date->format("d");
+							$status=$statusClose;
+							if($row["status"]==1){
+								$status=$statusCheck;
+							}
+							$isPaid=$unpaid;
+							$padiLabel = '<small class="text-danger">'.$tr->translate("UNPAID").'</small>';
+							if($row["isPaid"]==1){
+								$isPaid=$paid;
+								$padiLabel = '<small class="text-success">'.$tr->translate("PAID").'</small>';
+							}
+							?>
+							<li>
+								
+								<div class="item-content align-items-center justify-content-between pt-2">
+									<div>
+										<div class="d-flex align-items-center mb-0 ">
+											<i class="text-primary fa fa-university me-2"></i>
+											<small class="item-price"> <?php echo $row["supplierName"];?> </small>
+										</div>
+										<div class="d-flex align-items-center mb-0">
+											<span class="text-primary text-truncate"><?php echo $row["productName"];?></span>
+										</div>
+									</div>
+									<div>
+										<?php echo $padiLabel;?>
+									</div>
+								</div>
+								<div class="item-content align-items-center justify-content-between mb-2">
+									<div class="media-55 rounded-2 bg-primary d-flex justify-content-center align-items-center flex-column" >
+										<small class="item-title text-white lh-sm"><?php echo $forDateDay;?></small>
+										<small class="item-title text-white lh-sm"><?php echo $forDateMonth;?></small>
+										<small class="item-title text-white lh-sm" ><?php echo $forDateYear;?></small>
+									</div>
+									<div class="row m-0" style="width:100%;">
+										<div class="col-8">
+											<div class="d-flex align-items-center mb-0">
+												<i class="text-danger fa fa-gas-pump me-2"></i>
+												<div class="item-price text-danger"> <?php echo $tr->translate("QTY") ?> : <?php echo str_replace(".00","",number_format($row["qty"],2));?></div>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												<i class="text-danger fa fa-hand-holding-dollar me-2"></i>
+												<div class="item-price text-danger"><?php echo $tr->translate("TOTAL_PRICE") ?> : $ <?php echo str_replace(".00","",number_format($row["totalPrice"],2));?></div>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												<i class="text-danger fa fa-hand-holding-dollar me-2"></i>
+												<div class="item-price text-danger"><?php echo $tr->translate("LIITER_PRICE") ?> : $ <?php echo str_replace(".00","",number_format($row["litterPrice"],2));?></div>
+											</div>
+										</div>
+										<div class="col-4 p-0 pe-2 d-flex justify-content-around  align-items-end align-content-center  flex-column">
+											<div>
+												<?php echo $status;?>
+												<?php if($row["isPaid"]==0){?>
+												<a  title="<?php echo $tr->translate("EDIT");?>" class="btn light btn-warning fs-6 p-2 ms-2 fw-normal"  href="<?php echo $editUrl.$row["id"]; ?>" >
+												<i class="fa fa-edit"></i>
+												</a>
+												<?php } ?>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="sortable-handler"></div>
+							</li>
+						<?php }}?>
+				   </ul>
+				</div>
+				<!-- Job List -->                    
+			</div>    
+		</div>
+	</div>
+	<div class="modal modal-bottom fade" id="basicModal"  aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-user"></i>
+								</span>
+								<?php echo $formSearch->getElement('supplierId');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-gas-pump"></i>
+								</span>
+								<?php echo $formSearch->getElement('productId');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-money-bill"></i>
+								</span>
+								<?php echo $formSearch->getElement('isPaid');?>
+							</div>	
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+</script>

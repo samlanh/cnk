@@ -1,0 +1,177 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$this->headTitle($tr->translate("DASHBOARD"));
+	echo $this->headTitle();
+	$dbGb = new Application_Model_DbTable_DbGlobal();
+?>
+	<div class="content-inner pt-0">
+		<div class="container fb">
+			
+			<?php
+			$stringInconme="";
+			$stringExpense="";
+			if(!empty($this->bankAcc)){?>
+			<!-- Features -->
+				<div class="features-box">
+					<div class="row m-b10 g-3">
+						<?php foreach($this->bankAcc AS $key => $bCard ){ 
+							$bgClass = $dbGb->getBgColorClass($key);
+							$totalBalnce = str_replace(".00","",number_format($bCard["totalBalance"],2));
+							
+							$totalIncomeToday = $bCard["totalIncomeToday"];
+							$totalIncTodayLabel = str_replace(".00","",number_format($totalIncomeToday,2));
+							
+							$purPmtToday = $bCard["totalPurPmtToday"];
+							$otherExpToday = $bCard["totalExpenseToday"];
+							$totalExpenseToday = $otherExpToday+$purPmtToday;
+							
+							$totalExpTodayLabel = str_replace(".00","",number_format($totalExpenseToday,2));
+							
+							
+							$stringInconme.='
+							<div class="col">
+								<div class="card bg-gray p-1 mb-3">
+									<div class="row">
+										<div class="col-4 d-flex justify-content-center flex-column">
+											<div class="card bg-success bg-opacity-50 m-0 justify-content-center">
+												<i class="text-success fs-4 fa fa-download text-center"></i> 
+											</div>
+										</div>
+										<div class="col-8">
+											<small class="text-dark text-truncate d-block">'.$bCard["bankName"].'</small>
+											<small class="text-muted text-truncate d-block">'.$bCard["accountNumber"].'</small>
+											<div class="card-info">
+												<h6 class="text-truncate text-success title">'.$totalIncTodayLabel.'</h6>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+							';
+							$stringExpense.='
+							<div class="col">
+								<div class="card bg-gray p-1 mb-3">
+									<div class="row">
+										<div class="col-4 d-flex justify-content-center flex-column">
+											<div class="card bg-danger bg-opacity-50 m-0 justify-content-center">
+												<i class="text-danger fs-4 fa fa-upload text-center"></i> 
+											</div>
+										</div>
+										<div class="col-8">
+											<small class="text-dark text-truncate d-block">'.$bCard["bankName"].'</small>
+											<small class="text-muted text-truncate d-block">'.$bCard["accountNumber"].'</small>
+											<div class="card-info">
+												<h6 class="text-truncate text-danger title">'.$totalExpTodayLabel.'</h6>
+											</div>
+										</div>
+										
+									</div>
+								</div>
+							</div>
+							';
+						?>
+						<div class="col">
+							<div class="card card-bx card-content <?php echo $bgClass;?>">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-8">
+											<small class="text-white text-truncate"><?php echo $bCard["bankName"];?></small>
+											<div class="card-info">
+												<h6 class="text-truncate text-white title"><?php echo $totalBalnce;?></h6>
+												<p class="text-white text-truncate m-b0"><?php echo $bCard["accountName"];?></p>
+												<p class="text-white-50 text-truncate m-b0"><?php echo $bCard["accountNumber"];?></p>
+											</div>
+										</div>
+										<div class="col-4 d-flex justify-content-center flex-column">
+											<i class="text-white fs-4 fa fa-wallet text-center"></i> 
+											
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<?php } ?>    
+					</div>    
+				</div>
+			<!-- Features End -->
+			<?php } ?>
+			<!-- Dashboard Area -->
+			<div class="dashboard-area">
+				<div class="features-box">
+					<div class="title-bar">
+						<h5 class="dz-title"><i class="fa fa-bar-chart me-2" ></i><?php echo $tr->translate("summaryDataToday"); ?></h5>
+						<div class="swiper-defult-pagination pagination-dots style-1 p-0"></div>
+					</div>
+					<div class="row m-b0 g-3">
+						<?php echo $stringInconme;?>
+					</div>
+					<div class="row m-b0 g-3">
+						<?php echo $stringExpense;?>
+					</div>
+				</div>
+				
+				<?php if(!empty($this->supplierDept)){?>
+				<div class="features-box">
+					<div class="title-bar">
+						<h5 class="dz-title"><i class="fa fa-dollar me-2" ></i><?php echo $tr->translate("indebtednessData"); ?></h5>
+						<div class="swiper-defult-pagination pagination-dots style-1 p-0"></div>
+					</div>
+					<div class="row m-b0 g-3">
+						<?php 
+						$gTotalDept = 0;
+						foreach($this->supplierDept as $supplier){ 
+						
+						$totalDebt = $supplier["totalDebt"];
+						$totalDebtLabel = str_replace(".00","",number_format($totalDebt,2));
+						
+						$gTotalDept = $gTotalDept+$totalDebt;	
+						?>
+						<div class="col">
+							<div class="card bg-gray p-1 mb-3">
+								<div class="row">
+									<div class="col-4 d-flex justify-content-center flex-column">
+										<div class="card bg-warning bg-opacity-50 m-0 justify-content-center">
+											<i class="text-warning fs-4 fa fa-dollar text-center"></i> 
+										</div>
+									</div>
+									<div class="col-8">
+										<small class="text-dark text-truncate d-block"><?php echo $supplier["supplierName"];?></small>
+										<small class="text-muted text-truncate d-block"><?php echo $supplier["contactName"];?></small>
+										<div class="card-info">
+											<h6 class="text-truncate text-warning title"><?php echo $totalDebtLabel;?></h6>
+										</div>
+									</div>
+									
+								</div>
+							</div>
+						</div>
+						<?php } ?>
+					</div>
+					<div class="row m-b0 g-3">
+						<?php 
+							$gTotalDeptLabel = str_replace(".00","",number_format($gTotalDept,2));
+							
+						?>
+						<div class="col">
+							<div class="card bg-gray p-1">
+								<div class="row">
+									<div class="col-5">
+										<h6 class="text-dark text-truncate mt-2 mb-2"><i class="text-dark fs-4 fa fa-dollar me-1"></i><?php echo $tr->translate("totalDebt"); ?></h6>
+									</div>
+									<div class="col-7 d-flex justify-content-center align-items-end  flex-column">
+										<h6 class="text-truncate text-warning title"><?php echo $gTotalDeptLabel;?></h6>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<?php } ?>
+				
+				
+				
+			</div>
+		</div>    
+	</div>
+

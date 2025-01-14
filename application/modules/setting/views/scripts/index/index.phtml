@@ -1,0 +1,66 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+
+	$pageTitle = $tr->translate("USERS");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$urlEdit = $this->baseUrl() . "/setting/index/edit/id/";
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+?>
+
+<div class="container fb">
+	<!-- row -->
+	<div class="row">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="card-title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body py-2">
+					<?php if(!empty($this->userList)){?>
+					<div class="dz-list data-list">
+						<ul>
+							<?php $i=0; 
+							foreach($this->userList AS $rs){ $i++;
+								$status=$statusClose;
+								if($rs["status"]==1){
+									$status=$statusCheck;
+								}
+							?>
+							<li>
+								<div class="item-content item-link">
+									<div class="dz-icon bg-primary light">
+										<?php echo $i;?>                                  
+									</div>
+									<div class="dz-inner d-flex align-items-center w-100">
+										<div class="dz-title flex-1">
+											<span class="dz-title"><?php echo $rs["fullName"];?></span>
+											<span class="text-muted d-block"><?php echo $rs["userTypeTitle"];?></span>
+										</div>
+										
+										
+										<?php echo $status;?>
+										<a class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
+										<i class="fa fa-edit"></i>
+										</a>
+										
+									</div>
+								</div>
+							</li>
+							<?php } ?>
+						</ul>
+						<?php } ?>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>   
+</div>
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+</script>

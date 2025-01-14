@@ -1,0 +1,85 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("CREATE_REVENUE");
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+	
+?>
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form id="form-submit" method="POST">
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $frm->getElement('forDate');?>
+							</div>
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('categoryId');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-newspaper"></i>
+								</span>
+								<?php echo $frm->getElement('revenueTitle');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('totalAmount');?>
+							</div>
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('bankId');?>
+							</div>
+							<div class="mb-3">
+								<?php echo $frm->getElement('note');?>
+							</div>
+							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+	
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+		var categoryId = $('#categoryId').val();
+		if(categoryId == null || categoryId==0){
+			showToastMessage("<?php echo $tr->translate("categoryIsRequired");?>");
+			$('#categoryId').focus();
+			return false;
+		}
+		var bankId = $('#bankId').val();
+		if(bankId == null || bankId==0){
+			showToastMessage("<?php echo $tr->translate("bankIsRequired");?>");
+			$('#bankId').focus();
+			return false;
+		}
+		var totalAmount = $('#totalAmount').val();
+		totalAmount = isNaN(totalAmount) ? 0 : totalAmount;
+		
+		if(totalAmount <=0 ){
+			showToastMessage("<?php echo $tr->translate("invalidTotalAmount");?>");
+			$('#totalAmount').focus();
+			return false;
+		}
+		loading();
+		return true;
+	});
+});
+</script>

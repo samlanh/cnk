@@ -1,0 +1,38 @@
+<?php 
+$tr = Application_Form_FrmLanguages::getCurrentlanguage();
+
+$request=Zend_Controller_Front::getInstance()->getRequest();
+$action=$request->getActionName();
+$controller=$request->getControllerName();
+$module=$request->getModuleName();
+	
+$key = new Application_Model_DbTable_DbKeycode();
+$dataInfo=$key->getKeyCodeMiniInv(TRUE);
+
+$defaultLogo = $this->baseUrl()."/images/Logo.png";
+if(!empty($dataInfo['logo'])){
+	if (file_exists(PUBLIC_PATH."/images/logo/".$dataInfo['logo'])){
+		$defaultLogo = $this->baseUrl().'/images/logo/'.$dataInfo['logo'];
+	}
+}
+
+?>
+
+  <!-- Menubar -->
+	<div class="menubar-area">
+		<div class="toolbar-inner menubar-nav">
+			<a href="<?php echo $this->baseUrl()."/home/index"?>" class="nav-link active">
+				<i class= "text-primary fi fi-sr-home" ></i>
+			</a>
+			<a href="pages.html" class="nav-link">
+				<i class= "text-muted fi fi-sr-browser"></i>
+			</a>
+			<a href="messages.html" class="nav-link">
+				<i class= "text-muted fi fi-sr-envelope"></i>
+			</a>
+			<a href="javascript:void(0);" class="menu-toggler">
+				<i class= "text-muted fi fi-sr-apps"></i>
+			</a>
+		</div>
+	</div>
+	<!-- Menubar -->

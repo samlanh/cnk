@@ -1,0 +1,64 @@
+<?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("EDIT_INCEXP_CATEGORY");
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+	$statusLable = $tr->translate("DEACTIVE");
+	if($this->row["status"]==1){
+		$statusLable = $tr->translate("ACTIVE");
+	}
+?>
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'expensecategory','action'=>'edit')); ?>" method="POST" >
+					<div class="card-header">
+						<h5 class="title"><?php echo $pageTitle;?></h5>
+						<div class="form-check form-switch">
+						  <input onChange="statusLabel();" class="form-check-input form-check-success" id="status" name="status" type="checkbox" <?php if($this->row["status"]==1){ echo "checked"; } ?> >
+						  <label class="form-check-label form-label-status" for="status"><?php echo $statusLable;?></label>
+						</div>
+					</div>
+					<div class="card-body">
+						<div class="basic-form">
+							
+								<div class="mb-3 form-input">
+									<span class="input-icon">
+										<i class="fa-solid fa-layer-group"></i>
+									</span>
+									<?php echo $frm->getElement('title');?>
+									<?php echo $frm->getElement('id');?>
+								</div>
+								<div class="mb-3 form-input">
+									<span class="input-icon">
+										<i class="fa-solid fa-money-bill"></i>
+									</span>
+									<?php echo $frm->getElement('categoryType');?>
+								</div>
+								<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+							
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	
+	$("#form-submit").submit(function() {
+
+		const categoryType = document.getElementById('categoryType').value;
+		if(categoryType==''){
+			alert("Select Type!");
+			return false;
+		}
+	  return true;
+	});
+});
+</script>
