@@ -27,30 +27,68 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
     	$productName = new Zend_Form_Element_Text("productName");
 		$productName->setAttribs(array(
 				'class'=>'form-control',
-				'placeholder'=>$this->tr->translate("PRODUCT_NAME"),
+				'placeholder'=>$this->tr->translate("ឈ្មោះទំនិញ/សម្ភារៈ"),
 				'required'=>'required',
 				'autocomplete'=>'off'
 		));
-		$litterUnit = new Zend_Form_Element_Text("litterUnit");
-		$litterUnit->setAttribs(array(
+		$outstandingQty = new Zend_Form_Element_Text("outstandingQty");
+		$outstandingQty->setAttribs(array(
 				'class'=>'form-control form-control-number',
-				'placeholder'=>$this->tr->translate("LITER_UNIT"),
+				'placeholder'=>$this->tr->translate("ចំនួន"),
 				'required'=>'required',
 				'autocomplete'=>'off'
 		));
+		$costPrice = new Zend_Form_Element_Text("costPrice");
+		$costPrice->setAttribs(array(
+				'class'=>'form-control form-control-number',
+				'placeholder'=>$this->tr->translate("ថ្លៃដើម"),
+				'required'=>'required',
+				'autocomplete'=>'off'
+		));
+
+		$proType = new Zend_Form_Element_Select("proType");
+		$proType->setAttribs(array(
+				'class'=>'form-control-select',
+				'required'=>'required'
+		));
+		$opt = array(
+			''=>$this->tr->translate("ជ្រើសរើសប្រភេទ"),
+			'1'=>$this->tr->translate("ទំនិញលក់"),
+			'2'=>$this->tr->translate("វត្ថុធាតុដើម"),
+		);
+		$proType->setMultiOptions($opt);
+
+		$materialId = new Zend_Form_Element_Select("materialId");
+		$materialId->setAttribs(array(
+				'class'=>'form-control-select',
+				'onChange' => 'addRow()'
+		));
+
+		$dbProduct = new Section_Model_DbTable_DbProduct();
+		$rsProduct = $dbProduct->getAllMaterialList();
+		$optSup = array(''=>$this->tr->translate("ជ្រើសរើសវត្ថុធាតុដើម"),);
+		if(!empty($rsProduct)) foreach($rsProduct AS $rs){
+			$optSup[$rs['id']]=$rs['name'];
+		}
+		$materialId->setMultiOptions($optSup);
 
 		$id = new Zend_Form_Element_Hidden("id");
     	
     	if(!empty($data)){
     		$productName->setValue($data["productName"]);
-    		$litterUnit->setValue($data["litterUnit"]);
+    		$outstandingQty->setValue($data["outstandingQty"]);
+    		$costPrice->setValue($data["costPrice"]);
+    		$proType->setValue($data["proType"]);
     		$id->setValue($data["id"]);
     	}
     	
     	$this->addElements(array(
 				$search,
     			$productName,
-				$litterUnit,
+				$outstandingQty,
+				$costPrice,
+				$proType,
+				$materialId ,
 				$id
     			
     		));

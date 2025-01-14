@@ -28,7 +28,9 @@
 		try{
 	  		$arr = array(
 	  				'productName'	=> $_data['productName'],
-	  				'litterUnit'	=> $_data['litterUnit'],
+	  				'proType'		=> $_data['proType'],
+	  				'outstandingQty'=> $_data['outstandingQty'],
+	  				'costPrice'		=> $_data['costPrice'],
 	  				'createDate' 	=> date("Y-m-d"),
 	  				'status'		=> 1,
 					'userId'		=> $this->getUserId()
@@ -67,6 +69,40 @@
 		$sql = "SELECT  * FROM `ie_product`  WHERE 1 AND id= ".$id;
 		return $db->fetchRow($sql);
 	}
+	function getMaterialById($id){
+		$db = $this->getAdapter();
+		$sql = "SELECT  * FROM `ie_product`  WHERE status=1 AND proType=2 AND id= ".$id;
+		return $db->fetchRow($sql);
+	}
+	public function getAllMaterialList($data=array()){
+		$db = $this->getAdapter();
+		$sql = " 
+			SELECT 
+				p.`id` AS id
+				,p.productName AS `name`
+				,p.`costPrice`
+				
+		";
+		$fromStatment = " FROM `ie_product` AS p  ";
+		$where = " WHERE 1 AND p.status=1 AND p.proType=2 ";
+		
+		$sql.=$fromStatment;
+		$sql.=$where;
+		
+		$rows = $db->fetchAll($sql);
+		if (!empty($data['option'])) {
+			$options = '';
+			if (!empty($rows)){
+				foreach ($rows as $value) {
+					$options .= '<option  data-record-info="' . htmlspecialchars(Zend_Json::encode($value)) . '"  value="' . $value['id'] . '" >' . htmlspecialchars($value['name']) . '</option>';
+				}
+			}
+			return $options;
+		} else {
+			return $rows;
+		}
+	}
+
 	public function getAllProductList($data=array()){
 		$db = $this->getAdapter();
 		$sql = " 

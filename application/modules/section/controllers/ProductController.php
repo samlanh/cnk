@@ -83,6 +83,17 @@ class Section_ProductController extends Zend_Controller_Action
 		$this->view->frm = $formAdd;
 		Application_Model_Decorator::removeAllDecorator($formAdd);
     }
+	public function getMaterialInfoAction(){
+    	if($this->getRequest()->isPost()){
+    		$post=$this->getRequest()->getPost();
+			$db = new Section_Model_DbTable_DbProduct();
+    		$materialId =  $post['materialId'];
+    		$result = $db->getMaterialById($materialId);
+			print_r(Zend_Json::encode($result));
+			exit();
+    	}
+    	
+    }
 }
 
 

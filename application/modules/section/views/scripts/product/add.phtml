@@ -19,15 +19,50 @@
 						<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'add')); ?>" method="POST" >
 							<div class="mb-3 form-input">
 								<span class="input-icon">
-									<i class="fa-solid fa-gas-pump"></i>
+									<i class="fa-solid fa-cube"></i>
 								</span>
 								<?php echo $frm->getElement('productName');?>
 							</div>
 							<div class="mb-3 form-input">
 								<span class="input-icon">
-									<i class="fa-solid fa-scale-balanced"></i>
+									<i class="fa-solid fa-layer-group"></i>
 								</span>
-								<?php echo $frm->getElement('litterUnit');?>
+								<?php echo $frm->getElement('proType');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-layer-group"></i>
+								</span>
+								<?php echo $frm->getElement('outstandingQty');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-layer-group"></i>
+								</span>
+								<?php echo $frm->getElement('costPrice');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-layer-group"></i>
+								</span>
+								<?php echo $frm->getElement('materialId');?>
+							</div>
+							<div class="mb-3 form-input">
+								<table id="materialTable" class="table table-striped">
+									<thead>
+										<tr>
+										<th>ល.រ</th>
+										<th>ឈ្មោះ</th>
+										<th>ចំនួន</th>
+										<th>លុប</th>
+										</tr>
+									</thead>
+									<tbody>
+										<!-- Rows will be added dynamically -->
+									</tbody>
+								</table>
+								<input type="hidden" id="selectedMaterials" name="selectedMaterials" value="" />
+								<input type="hidden" id="selectedIndexes" name="selectedIndexes" value="" />
 							</div>
 							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
 						</form>
@@ -46,4 +81,98 @@ $( document ).ready(function() {
 	  return true;
 	});
 });
+
+
+function addRow() {
+  const materialId = document.getElementById('materialId').value;
+  const url = "<?php echo $this->baseUrl();?>/section/product/get-material-info";
+
+  if (!materialId) {
+    alert("Please select a material.");
+    return;
+  }
+
+  // Make an AJAX POST request to fetch material info
+  $.post(url, { materialId: materialId }, function (data) {
+    if (data) {
+      const materialInfo = JSON.parse(data); // Ensure data is parsed if it's a JSON string
+      const table = $('#materialTable tbody');
+
+      // Check if the material is already in the table
+      if ($(`#materialTable tbody tr[data-id='${materialId}']`).length) {
+        alert("This material is already added.");
+        return;
+      }
+
+      // Get the current index (row count + 1 for the new row)
+      const currentIndex = table.children().length + 1;
+
+      // Add a new row with material details
+      const newRow = `
+        <tr data-id="${materialId}" data-index="${currentIndex}">
+          <td>${currentIndex}</td>
+          <td>${materialInfo.productName}</td>
+          <td>
+            <input type="number" class="quantity" name="quantity_${currentIndex}" id="quantity_${currentIndex}" value="1" min="1" style="width: 50px;" />
+          </td>
+          <td>
+		  	<i class="deleteRow fa-solid fa-trash"></i>
+          </td>
+        </tr>
+      `;
+      table.append(newRow);
+
+      // Update hidden inputs to include the new materialId and index
+      updateHiddenInputs();
+
+      table.find('tr:last-child .deleteRow').on('click', function () {
+        $(this).closest('tr').remove();
+        updateIndexes(); // Recalculate row indexes after deletion
+        updateHiddenInputs(); // Update hidden inputs after deletion
+      });
+    } else {
+      alert("No material data found.");
+    }
+  }).fail(function (xhr, status, error) {
+    console.error("Error fetching material info:", error);
+  });
+}
+
+// Function to update indexes after deleting rows
+function updateIndexes() {
+  $('#materialTable tbody tr').each(function (index, row) {
+    const newIndex = index + 1;
+
+    // Update the index in the first cell
+    $(row).find('td:first').text(newIndex);
+
+    // Update data attribute and input names/IDs
+    $(row).attr('data-index', newIndex);
+    $(row).find('.quantity').attr('name', `quantity_${newIndex}`).attr('id', `quantity_${newIndex}`);
+    $(row).find('.unitPrice').attr('name', `unitPrice_${newIndex}`).attr('id', `unitPrice_${newIndex}`);
+    $(row).find('.totalCostInput').attr('name', `totalCost_${newIndex}`).attr('id', `totalCost_${newIndex}`);
+  });
+}
+
+// Function to update hidden inputs for material IDs and indexes
+function updateHiddenInputs() {
+  const materialIds = [];
+  const indexes = [];
+
+  $('#materialTable tbody tr').each(function () {
+    const materialId = $(this).data('id');
+    const index = $(this).data('index');
+
+    materialIds.push(materialId);
+    indexes.push(index);
+  });
+
+  // Update hidden inputs with comma-separated values
+  $('#selectedMaterials').val(materialIds.join(','));
+  $('#selectedIndexes').val(indexes.join(','));
+}
+
+
+
+
 </script>
