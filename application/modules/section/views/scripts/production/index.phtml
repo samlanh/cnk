@@ -1,0 +1,119 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("PRODUCTION");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	
+	$frm = $this->frm;
+	$formSearch = $this->formSearch;
+	$urlEdit = $this->baseUrl()."/section/production/edit/id/";
+	
+	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
+	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
+?>
+	<div class="page-content">
+		<div class="container"> 
+			<div class="serach-area"> 
+				<div class="filter-area m-0">
+					<div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div>
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+				</div>
+				<?php if(!empty($this->rs)){?>
+				<div class="dz-list data-list">
+					<ul>
+						<?php $i=0; 
+						foreach($this->rs AS $rs){ $i++;
+							$status=$statusClose;
+							if($rs["status"]==1){
+								$status=$statusCheck;
+							}
+						
+						?>
+						<li>
+							<div  class="item-content item-link">
+								<div class="dz-icon bg-primary light">
+									<?php echo $i;?>                                  
+								</div>
+								<div class="dz-inner d-flex align-items-center w-100">
+									<div class="dz-title flex-1">
+										<span class="dz-title"><?php echo $rs["productName"];?></span>
+										<span class="text-red d-block"><i class="fa-solid fa-list me-2"></i><?php echo $rs['Type']; ?></span>
+										<span class="text-blue d-block"><i class="fa-solid fa-layer-group"></i>   <?php echo $rs['outstandingQty']." ".$rs['measure']; ?></span>
+									</div>
+									<?php echo $status;?>
+									<a class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
+									<i class="fa fa-edit"></i>
+									</a>
+								</div>
+							</div>
+						</li>
+						<?php } ?>
+					</ul>         
+				</div>    
+				<?php } ?>     
+			</div>    
+		</div>
+	</div>
+
+	<div class="modal modal-bottom fade" id="basicModal"  aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('proType');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+</script>

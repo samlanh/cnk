@@ -1,0 +1,106 @@
+<?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("EDIT_PRODUCT");
+	
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	$frm = $this->frm;
+	
+?>
+	<div class="container fb">
+		<div class="col-12">
+			<div class="card">
+				<div class="card-header">
+					<h5 class="title"><?php echo $pageTitle;?></h5>
+				</div>
+				<div class="card-body">
+					<div class="basic-form">
+						<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'edit')); ?>" method="POST" >
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-gas-pump"></i>
+								</span>
+								<?php echo $frm->getElement('productName');?>
+								<?php echo $frm->getElement('id');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-layer-group"></i>
+								</span>
+								<?php echo $frm->getElement('proType');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-layer-group"></i>
+								</span>
+								<?php echo $frm->getElement('outstandingQty');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-dollar-sign"></i>
+								</span>
+								<?php echo $frm->getElement('costPrice');?>
+							</div>
+							<div class="mb-3 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-scale-balanced"></i>
+								</span>
+								<?php echo $frm->getElement('measure');?>
+							</div>
+							<div class="mb-3 form-input materialSetting">
+								<table id="materialTable" class="table table-striped">
+									<thead>
+										<tr class="table-info">
+											<th class="text-center" colspan="3">វត្ថុធាតុដើម</th>
+										</tr>
+										<tr class="table-active">
+											<th>ល.រ</th>
+											<th>ឈ្មោះ</th>
+											<th>ចំនួន</th>
+										</tr>
+									</thead>
+									<tbody>
+										<?php
+											$i=0;
+											if(!empty($this->rsdetail))foreach ($this->rsdetail AS $rs) {
+											$i++;
+										?>
+											<tr >
+												<td ><?php echo $i; ?></td>
+												<td ><?php echo $rs['materialName'];?></td>
+												<td ><?php echo $rs['usageQty'];?></td>
+											</tr>
+										<?php } ?>	 
+									</tbody>
+								</table>
+							</div>
+							<div class="form-check form-switch">
+								<label class="form-check-label" for="status"><?php echo $tr->translate('STATUS');?></label>
+								<input class="form-check-input form-check-info" id="status" name="status" type="checkbox" <?php if($this->rs['status']==1){ echo "checked"; } ?>  > 
+							</div>
+							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script>
+$( document ).ready(function() {
+	changeType();
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+	$("#form-submit").submit(function() {
+	  return true;
+	});
+});
+
+function changeType(){
+	const proType = document.getElementById('proType').value;
+
+	$(".materialSetting").css("display", "none");
+	if(proType==1){
+		$(".materialSetting").css("display", "flow-root");
+	}
+}
+</script>
