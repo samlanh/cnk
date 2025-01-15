@@ -5,6 +5,7 @@
 	echo $this->headTitle();
 	
 	$frm = $this->frm;
+	$formSearch = $this->formSearch;
 	$urlEdit = $this->baseUrl()."/section/product/edit/id/";
 	$addUrl = $this->baseUrl()."/section/product/add";
 	
@@ -14,7 +15,15 @@
 	<div class="page-content">
 		<div class="container"> 
 			<div class="serach-area"> 
-				<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'index')); ?>" method="POST" >
+				<div class="filter-area m-0">
+					<div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div>
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+				</div>
+				<!-- <form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'index')); ?>" method="POST" >
 					<div class="input-group search-input">
 						<?php echo $frm->getElement('search');?>
 					</div>
@@ -25,7 +34,7 @@
 						</div>
 						<button type="submit" class="btn  filter-btn bg-skyblue light"><i class="fa-solid fa-magnifying-glass"></i></button>
 					</div>
-				</form>
+				</form> -->
 				<?php if(!empty($this->rs)){?>
 				<div class="dz-list data-list">
 					<ul>
@@ -46,6 +55,7 @@
 									<div class="dz-title flex-1">
 										<span class="dz-title"><?php echo $rs["productName"];?></span>
 										<span class="text-red d-block"><i class="fa-solid fa-list me-2"></i><?php echo $rs['Type']; ?></span>
+										<span class="text-blue d-block"><i class="fa-solid fa-layer-group"></i>   <?php echo $rs['outstandingQty']." ".$rs['measure']; ?></span>
 									</div>
 									<?php echo $status;?>
 									<a class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
@@ -59,6 +69,59 @@
 				</div>    
 				<?php } ?>     
 			</div>    
+		</div>
+	</div>
+
+	<div class="modal modal-bottom fade" id="basicModal"  aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('proType');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 <script>

@@ -7,24 +7,38 @@
     }
     function getAllProduct($search){
 		$db = $this->getAdapter();
+		
+		$startdatetimestamp = strtotime($search['startDate']);
+		$startDateFormat = date('Y-m-d', $startdatetimestamp);
+
+		$enddatetimestamp = strtotime($search['endDate']);
+		$endDateFormat = date('Y-m-d', $enddatetimestamp);
+
+	
 		$sql = "SELECT *,
 			CASE
 				WHEN proType=1 THEN 'ទំនិញលក់'
 				WHEN proType=2 THEN 'វត្ថុធាតុដើម'
 			END as Type
 		 FROM `ie_product`  WHERE 1 ";
-		
 		$where = '';
-		$order = ' ORDER BY id DESC ';
-		if(empty($search)){
-			return $db->fetchAll($sql.$order);
-		}
-		if(!empty($search['search'])){
+		$startDate = (empty($startDateFormat)) ? '1' : "createDate >= '" . $startDateFormat . " 00:00:00'";
+		$endDate = (empty($endDateFormat)) ? '1' : "createDate <= '" . $endDateFormat . " 23:59:59'";
+		$where .= " AND " . $startDate . " AND " . $endDate;
+		
+		if(!empty($search['advSearch'])){
 			$s_where = array();
-			$s_search = addslashes(trim($search['search']));
+			$s_search = addslashes(trim($search['advSearch']));
 			$s_where[] = " productName LIKE '%{$s_search}%'";
 			$where .=' AND ( '.implode(' OR ',$s_where).')';
 		}
+		if(!empty($search['proType'])){
+			$where .=' AND proType = '.$search['proType'];
+		}
+		if($search['status'] > -1 ){
+			$where .=' AND status= '.$search['status'];
+		}
+		$order = ' ORDER BY id DESC ';
 		return $db->fetchAll($sql.$where.$order);
 	}
 	public function addProduct($_data){

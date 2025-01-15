@@ -12,17 +12,20 @@ class Section_ProductController extends Zend_Controller_Action
     public function indexAction()
     {
     	try{
-			if($this->getRequest()->isPost()){
-				$_data=$this->getRequest()->getPost();
-				$search = array(
-						'search' => $_data['search'],
-                    );
+ 			
+			$param = $this->getRequest()->getParams();
+			if(isset($param['btn-search'])){
+				$search=$param;
 			}else{
 				$search = array(
-                    'search' => '',
+                    'advSearch' => '',
+                    'proType' => '',
+					'status' => -1,
+					'startDate' => date('Y-m-d'),
+					'endDate' => date('Y-m-d'),
                 );
 			}
- 			$db = new Section_Model_DbTable_DbProduct();
+			$db = new Section_Model_DbTable_DbProduct();
             $this->view->rs= $db->getAllProduct($search);
 			
 		}catch (Exception $e){
@@ -34,6 +37,11 @@ class Section_ProductController extends Zend_Controller_Action
 		$formAdd = $form->FrmAddProduct();
 		$this->view->frm = $formAdd;
 		Application_Model_Decorator::removeAllDecorator($formAdd);
+
+		$form = new Application_Form_FrmCombineSearchGlobal();
+		$forms = $form->FormSearchProduct();
+		Application_Model_Decorator::removeAllDecorator($forms);
+		$this->view->formSearch = $form;
 
     }
    public function addAction()
