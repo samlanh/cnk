@@ -76,7 +76,9 @@ class Section_ProductController extends Zend_Controller_Action
         $id=$this->getRequest()->getParam("id");
 		$db = new Section_Model_DbTable_DbProduct();
 		$rs=$db->getProductById($id);
+		$rsdetail=$db->getProductMaterialById($id);
 		$this->view->rs = $rs;
+		$this->view->rsdetail = $rsdetail;
 
 		$form = new Section_Form_FrmProduct();
 		$formAdd = $form->FrmAddProduct($rs);

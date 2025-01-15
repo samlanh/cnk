@@ -19,37 +19,38 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 
 		$search = new Zend_Form_Element_Text("search");
 		$search->setAttribs(array(
-				'class'=>'form-control',
-				'placeholder'=>$this->tr->translate("SEARCH"),
-				'autocomplete'=>'off'
+			'class'=>'form-control',
+			'placeholder'=>$this->tr->translate("SEARCH"),
+			'autocomplete'=>'off'
 		));
     	
     	$productName = new Zend_Form_Element_Text("productName");
 		$productName->setAttribs(array(
-				'class'=>'form-control',
-				'placeholder'=>$this->tr->translate("ឈ្មោះទំនិញ/សម្ភារៈ"),
-				'required'=>'required',
-				'autocomplete'=>'off'
+			'class'=>'form-control',
+			'placeholder'=>$this->tr->translate("ឈ្មោះទំនិញ/សម្ភារៈ"),
+			'required'=>'required',
+			'autocomplete'=>'off'
 		));
 		$outstandingQty = new Zend_Form_Element_Text("outstandingQty");
 		$outstandingQty->setAttribs(array(
-				'class'=>'form-control form-control-number',
-				'placeholder'=>$this->tr->translate("ចំនួន"),
-				'required'=>'required',
-				'autocomplete'=>'off'
+			'class'=>'form-control form-control-number',
+			'placeholder'=>$this->tr->translate("ចំនួន"),
+			'required'=>'required',
+			'autocomplete'=>'off'
 		));
 		$costPrice = new Zend_Form_Element_Text("costPrice");
 		$costPrice->setAttribs(array(
-				'class'=>'form-control form-control-number',
-				'placeholder'=>$this->tr->translate("ថ្លៃដើម"),
-				'required'=>'required',
-				'autocomplete'=>'off'
+			'class'=>'form-control form-control-number',
+			'placeholder'=>$this->tr->translate("ថ្លៃដើម"),
+			'required'=>'required',
+			'autocomplete'=>'off'
 		));
 
 		$proType = new Zend_Form_Element_Select("proType");
 		$proType->setAttribs(array(
-				'class'=>'form-control-select',
-				'required'=>'required'
+			'class'    =>'form-control-select',
+			'required' =>'required',
+			'onChange' =>'changeType()'
 		));
 		$opt = array(
 			''=>$this->tr->translate("ជ្រើសរើសប្រភេទ"),
@@ -57,7 +58,7 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 			'2'=>$this->tr->translate("វត្ថុធាតុដើម"),
 		);
 		$proType->setMultiOptions($opt);
-
+	
 		$materialId = new Zend_Form_Element_Select("materialId");
 		$materialId->setAttribs(array(
 				'class'=>'form-control-select',

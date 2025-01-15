@@ -7,7 +7,12 @@
     }
     function getAllProduct($search){
 		$db = $this->getAdapter();
-		$sql = "SELECT * FROM `ie_product`  WHERE 1 ";
+		$sql = "SELECT *,
+			CASE
+				WHEN proType=1 THEN 'ទំនិញលក់'
+				WHEN proType=2 THEN 'វត្ថុធាតុដើម'
+			END as Type
+		 FROM `ie_product`  WHERE 1 ";
 		
 		$where = '';
 		$order = ' ORDER BY id DESC ';
@@ -64,11 +69,13 @@
 		$status = empty($_data["status"]) ?0:1;	
 		try{
 	  		$arr = array(
-	  				'productName'	=> $_data['productName'],
-	  				'litterUnit'	=> $_data['litterUnit'],
-	  				'createDate' 	=> date("Y-m-d"),
-	  				'status'		=> $status,
-					'userId'		=> $this->getUserId()
+				'productName'	=> $_data['productName'],
+				'proType'		=> $_data['proType'],
+				'outstandingQty'=> $_data['outstandingQty'],
+				'costPrice'		=> $_data['costPrice'],
+				'measure'		=> $_data['measure'],
+				'status'		=> $status,
+				'userId'		=> $this->getUserId()
 	  		);
 			$where=$this->getAdapter()->quoteInto("id=?", $_data["id"]);
 			$this->update($arr,$where);
@@ -88,6 +95,13 @@
 		$db = $this->getAdapter();
 		$sql = "SELECT  * FROM `ie_product`  WHERE status=1 AND proType=2 AND id= ".$id;
 		return $db->fetchRow($sql);
+	}
+	function getProductMaterialById($id){
+		$db = $this->getAdapter();
+		$sql = "SELECT  *,
+		(SELECT p.productName FROM `ie_product` AS p WHERE p.status=1 AND  p.proType =2 AND p.id=pm.`materialId` LIMIT 1 ) AS materialName
+		 FROM `ie_product_material` AS pm   WHERE 1 AND pm.productId= ".$id;
+		return $db->fetchAll($sql);
 	}
 	public function getAllMaterialList($data=array()){
 		$db = $this->getAdapter();

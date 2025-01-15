@@ -47,13 +47,13 @@
 								</span>
 								<?php echo $frm->getElement('measure');?>
 							</div>
-							<div class="mb-3 form-input">
+							<div class="mb-3 form-input materialSetting">
 								<span class="input-icon">
 									<i class="fa-solid fa-list"></i>
 								</span>
 								<?php echo $frm->getElement('materialId');?>
 							</div>
-							<div class="mb-3 form-input">
+							<div class="mb-3 form-input materialSetting">
 								<table id="materialTable" class="table table-striped">
 									<thead>
 										<tr class="table-active">
@@ -79,21 +79,41 @@
 
 <script>
 $( document ).ready(function() {
+	changeType();
     $('.classHeadTitle').html("<?php echo $pageTitle;?>");
 	
 	$("#form-submit").submit(function() {
-		
+		const proType = document.getElementById('proType').value;
+		if(proType==''){
+			alert("ជ្រើសរើសប្រភេទ!");
+			return false;
+		}
 	  return true;
 	});
 });
 
+function changeType(){
+	const proType = document.getElementById('proType').value;
+
+	$(".materialSetting").css("display", "none");
+	if(proType==1){
+		$(".materialSetting").css("display", "flow-root");
+	}
+}
 
 function addRow() {
+
+  const proType = document.getElementById('proType').value;
   const materialId = document.getElementById('materialId').value;
+
   const url = "<?php echo $this->baseUrl();?>/section/product/get-material-info";
 
-  if (!materialId) {
-    alert("Please select a material.");
+  if(proType!=1) {
+    alert("ជ្រើសរើសប្រភេទទំនិញលក់!");
+    return;
+  }
+  if(!materialId) {
+    alert("ជ្រើសរើសវត្ថុធាតុដើម!");
     return;
   }
 
