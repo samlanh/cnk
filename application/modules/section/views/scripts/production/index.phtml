@@ -73,15 +73,24 @@
 									</div>
 								</div>
 								<div class="sortable-handler">
+									<style>
+										.table > :not(caption) > * > * {
+											padding: 0.3rem 0.3rem;
+											background-color: var(--bs-table-bg);
+											border-bottom-width: 0px;
+											box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+											font-size: 12px;
+										}
+									</style>
 									<table id="materialTable" class="table table-striped">
 										<thead>
 											<tr class="table-info">
 												<th class="text-center" colspan="3">ទំនិញ</th>
 											</tr>
-											<tr class="table-active">
-												<th>ល.រ</th>
+											<tr class="table-active ">
+												<th class="text-center" width="10%">ល.រ</th>
 												<th>ឈ្មោះ</th>
-												<th>ចំនួន</th>
+												<th class="text-center" width="30%">ចំនួន</th>
 											</tr>
 										</thead>
 										<tbody>
@@ -92,9 +101,9 @@
 												$i++;
 											?>
 												<tr >
-													<td ><?php echo $i; ?></td>
+													<td class="text-center"><?php echo $i; ?></td>
 													<td ><?php echo $rs['productName'];?></td>
-													<td ><?php echo $rs['quantity'];?></td>
+													<td class="text-center"><?php echo $rs['quantity'];?></td>
 												</tr>
 											<?php } ?>	 
 										</tbody>
