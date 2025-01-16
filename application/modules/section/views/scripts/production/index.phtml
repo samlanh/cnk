@@ -1,13 +1,12 @@
  <?php
 	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
-	$pageTitle = $tr->translate("PRODUCT");
+	$pageTitle = $tr->translate("PRODUCTION");
 	$this->headTitle($pageTitle);
 	echo $this->headTitle();
 	
 	$frm = $this->frm;
 	$formSearch = $this->formSearch;
-	$urlEdit = $this->baseUrl()."/section/product/edit/id/";
-	$addUrl = $this->baseUrl()."/section/product/add";
+	$urlEdit = $this->baseUrl()."/section/production/edit/id/";
 	
 	$statusClose = '<span class="badge badge-circle badge-danger "><i class="fa fa-xmark"></i></span>';
 	$statusCheck = '<span class="badge badge-circle badge-success"><i class="fa fa-check"></i></span>';
@@ -23,18 +22,6 @@
 						<i class="text-primary fa fa-filter "></i>
 					</a>
 				</div>
-				<!-- <form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'index')); ?>" method="POST" >
-					<div class="input-group search-input">
-						<?php echo $frm->getElement('search');?>
-					</div>
-					<div class="filter-area">
-						<div>
-							<h5><?php echo $pageTitle; ?></h5>
-							<span><?php echo count($this->rs); ?> <?php echo $tr->translate("PRODUCT"); ?></span>
-						</div>
-						<button type="submit" class="btn  filter-btn bg-skyblue light"><i class="fa-solid fa-magnifying-glass"></i></button>
-					</div>
-				</form> -->
 				<?php if(!empty($this->rs)){?>
 				<div class="dz-list data-list">
 					<ul>

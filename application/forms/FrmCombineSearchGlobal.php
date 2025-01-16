@@ -95,4 +95,25 @@ Class Application_Form_FrmCombineSearchGlobal extends Zend_Dojo_Form {
 		));
 		return $this;
 	}
+
+	function FormSearchProduct($search=null)
+	{
+		$frm = new Application_Form_FrmSearchGlobal();
+		
+		$controlSearch = $frm->controlTextSearch($search);
+		$protypeSearch = $frm->getProType($search);
+		$startDate = $frm->getStartDateSearch($search);
+		$endDate = $frm->getEndDateSearch($search);
+		$status = $frm->getStatusSearch($search);
+	
+		
+		$this->addElements(array(
+			$controlSearch,
+			$protypeSearch,
+			$startDate,
+			$endDate,
+			$status,
+		));
+		return $this;
+	}
 }

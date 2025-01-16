@@ -163,4 +163,19 @@ Class Application_Form_FrmSearchGlobal extends Zend_Dojo_Form {
 		$isVoid->setValue($this->request->getParam("isVoid"));
 		return $isVoid;
 	}
+	function getProType($_data=null){
+		$proType = new Zend_Form_Element_Select("proType");
+		$proType->setAttribs(array(
+			'class'    =>'form-control-select',
+			
+		));
+		$opt = array(
+			''=>$this->tr->translate("ជ្រើសរើសប្រភេទ"),
+			'1'=>$this->tr->translate("ទំនិញលក់"),
+			'2'=>$this->tr->translate("វត្ថុធាតុដើម"),
+		);
+		$proType->setMultiOptions($opt);
+		return $proType;
+	}
+	
 }

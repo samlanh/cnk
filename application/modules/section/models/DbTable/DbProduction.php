@@ -1,4 +1,4 @@
-<?php class Section_Model_DbTable_DbProduct extends Zend_Db_Table_Abstract{
+<?php class Section_Model_DbTable_DbProduction extends Zend_Db_Table_Abstract{
 
 	protected $_name = 'ie_product';
     public function getUserId(){
@@ -41,22 +41,20 @@
 		$order = ' ORDER BY id DESC ';
 		return $db->fetchAll($sql.$where.$order);
 	}
-	public function addProduct($_data){
+	public function addProduction($_data){
 		
 		$db = $this->getAdapter();
 		try{
 	  		$arr = array(
-				'productName'	=> $_data['productName'],
-				'proType'		=> $_data['proType'],
-				'outstandingQty'=> $_data['outstandingQty'],
-				'costPrice'		=> $_data['costPrice'],
-				'measure'		=> $_data['measure'],
+				'productionDate'=> $_data['productionDate'],
+				'counter'		=> $_data['counter'],
+				'note'			=> $_data['note'],
 				'createDate' 	=> date("Y-m-d"),
 				'status'		=> 1,
 				'userId'		=> $this->getUserId()
 	  		);
 			 
-			$this->_name="ie_product";
+			$this->_name="ie_production";
 			$id = $this->insert($arr);
 			//
 			if($_data['selectedIndexes']!=""){
@@ -64,12 +62,20 @@
 				foreach ($ids as $i)
 				{
 					$arrMaterial = array(
-						'productId'	 => $id,
-						'materialId' => $_data['id_'.$i],
-						'usageQty'   => $_data['quantity_'.$i],
+						'productionId'	 => $id,
+						'productId' => $_data['id_'.$i],
+						'quantity'   => $_data['quantity_'.$i],
 					);
 					$this->_name="ie_product_material";
 					$this->insert($arrMaterial);
+
+					//update material qty
+
+					$param = array(
+						'productId' => $_data['id_'.$i],
+						'quantity'   => $_data['quantity_'.$i],
+					);
+					$this->updateMaterialQty(	$param);
 				 }
 			}
 		}catch (Exception $e){
@@ -77,6 +83,29 @@
 			Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
 		}
 	}
+	public function updateMaterialQty($_data){
+		
+		$db = $this->getAdapter();
+		$status = empty($_data["status"]) ?0:1;	
+		try{
+	  		$arr = array(
+				'productName'	=> $_data['productName'],
+				'proType'		=> $_data['proType'],
+				'outstandingQty'=> $_data['outstandingQty'],
+				'costPrice'		=> $_data['costPrice'],
+				'measure'		=> $_data['measure'],
+				'status'		=> $status,
+				'userId'		=> $this->getUserId()
+	  		);
+			$where=$this->getAdapter()->quoteInto("id=?", $_data["id"]);
+			$this->update($arr,$where);
+
+		}catch (Exception $e){
+			$db->rollBack();
+			Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
+		}
+	}
+
 	public function updateProduct($_data){
 		
 		$db = $this->getAdapter();

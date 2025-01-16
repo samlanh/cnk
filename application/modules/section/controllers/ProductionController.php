@@ -1,6 +1,6 @@
 <?php
 
-class Section_ProductController extends Zend_Controller_Action
+class Section_ProductionController extends Zend_Controller_Action
 {
 	const REDIRECT_URL = '/section';
     public function init()
@@ -25,7 +25,7 @@ class Section_ProductController extends Zend_Controller_Action
 					'endDate' => date('Y-m-d'),
                 );
 			}
-			$db = new Section_Model_DbTable_DbProduct();
+			$db = new Section_Model_DbTable_DbProduction();
             $this->view->rs= $db->getAllProduct($search);
 			
 		}catch (Exception $e){
@@ -52,8 +52,8 @@ class Section_ProductController extends Zend_Controller_Action
 			try{
               
 				$sms="INSERT_SUCCESS";
-				$_dbmodel = new Section_Model_DbTable_DbProduct();
-			    $_dbmodel->addProduct($_data);
+				$_dbmodel = new Section_Model_DbTable_DbProduction();
+			    $_dbmodel->addProduction($_data);
 				Application_Form_FrmMessage::Sucessfull($sms,"/section/product");
 			}catch(Exception $e){
 				Application_Form_FrmMessage::message("INSERT_FAIL");
@@ -61,7 +61,7 @@ class Section_ProductController extends Zend_Controller_Action
 			}		
 		}
 		$form = new Section_Form_FrmProduct();
-		$formAdd = $form->FrmAddProduct();
+		$formAdd = $form->FrmAddProduction();
 		$this->view->frm = $formAdd;
 		Application_Model_Decorator::removeAllDecorator($formAdd);
     }
@@ -72,7 +72,7 @@ class Section_ProductController extends Zend_Controller_Action
             $sms="EDIT_SUCCESS";
 			try{
 				$sms="EDIT_SUCCESS";
-				$_dbmodel = new Section_Model_DbTable_DbProduct();
+				$_dbmodel = new Section_Model_DbTable_DbProduction();
 			    $_dbmodel->updateProduct($_data);
 				Application_Form_FrmMessage::Sucessfull($sms,"/section/product");
 			}catch(Exception $e){
@@ -82,7 +82,7 @@ class Section_ProductController extends Zend_Controller_Action
 		}
 
         $id=$this->getRequest()->getParam("id");
-		$db = new Section_Model_DbTable_DbProduct();
+		$db = new Section_Model_DbTable_DbProduction();
 		$rs=$db->getProductById($id);
 		$rsdetail=$db->getProductMaterialById($id);
 		$this->view->rs = $rs;
@@ -93,17 +93,7 @@ class Section_ProductController extends Zend_Controller_Action
 		$this->view->frm = $formAdd;
 		Application_Model_Decorator::removeAllDecorator($formAdd);
     }
-	public function getMaterialInfoAction(){
-    	if($this->getRequest()->isPost()){
-    		$post=$this->getRequest()->getPost();
-			$db = new Section_Model_DbTable_DbProduct();
-    		$materialId =  $post['materialId'];
-    		$result = $db->getMaterialById($materialId);
-			print_r(Zend_Json::encode($result));
-			exit();
-    	}
-    	
-    }
+	
 }
 
 
