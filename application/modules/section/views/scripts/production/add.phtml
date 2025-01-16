@@ -40,17 +40,17 @@
 								<table id="materialTable" class="table table-striped">
 									<thead>
 										<tr class="table-info">
-											<th>ល.រ</th>
-											<th>ឈ្មោះ</th>
-											<th>ចំនួន</th>
-											<th>លុប</th>
+											<th width="5%">ល.រ</th>
+											<th class="text-center">ឈ្មោះ</th>
+											<th width="20%">ចំនួន</th>
+											<th width="5%">លុប</th>
 										</tr>
 									</thead>
 									<tbody>
 										<!-- Rows will be added dynamically -->
 									</tbody>
 								</table>
-								<input type="text" id="selectedIndexes" name="selectedIndexes" value="" />
+								<input type="hidden" id="selectedIndexes" name="selectedIndexes" value="" />
 							</div>
 							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
 						</form>

@@ -30,32 +30,40 @@
     	}
     	return $db->fetchAll($sql.$where.$orderby);
     }
-	public function getTotalDebtBySupplier($search=array()){
+	
+	public function getProductDisplay($search=array()){
     	$db = $this->getAdapter();
-		$sql="
-		SELECT 
-			sup.id AS supplierId
-			,sup.`supplierName` AS supplierName
-			,sup.`contactName`
-			,COALESCE(SUM(pur.`outstandingBalanceAfter`),0) AS totalDebt
-		FROM `ie_supplier` AS sup
-			LEFT JOIN `ie_purchase` AS pur ON sup.id = pur.`supplierId` AND pur.`status` = 1 AND pur.`isPaid` = 0
-		WHERE sup.`status` = 1
-		";
-		
-    	$where="";
-    	if(!empty($search['advanceSearch'])){
-    		$s_where = array();
-    		$s_search = addslashes(trim($search['advance_search']));
-    		$s_search = str_replace(' ', '', addslashes(trim($search['advance_search'])));
-    		$s_where[] = " REPLACE(sup.`supplierName`,' ','') LIKE '%{$s_search}%'";
-    		
-    		$sql .=' AND ( '.implode(' OR ',$s_where).')';
-    	}
-		$sql.=" GROUP BY sup.id ";
-    	$orderby = " ORDER BY sup.id ASC ";
-    	return $db->fetchAll($sql.$where.$orderby);
+		$sql="SELECT p.id,p.productName,p.outstandingQty,p.picture,p.measure,
+					pd.`quantity` as qtyProduct
+					FROM `ie_product` p LEFT JOIN
+					(
+					`ie_production` pt INNER JOIN
+					`ie_production_detail` pd ON  pt.`id`=pd.`productionId`
+					) ON  p.`id`=pd.`productId`
+					 WHERE p.status=1 ";
+    		return $db->fetchAll($sql);
     }
+	public function getAllCustomerBalance($search=array()){
+    	$db = $this->getAdapter();
+		$sql="SELECT c.id as customerId,
+					 c.customerName,
+					(SELECT
+					SUM(outstandingBalance)
+ 					FROM `ie_sale`  WHERE isPaid=0 AND STATUS=1 AND customerId=c.id) as outstandingBalance
+		 FROM ie_customer c
+					 WHERE status=1   ";
+    		return $db->fetchAll($sql);
+    }
+	public function getAllSupplierBalance($search=array()){
+    	$db = $this->getAdapter();
+		$sql="SELECT 
+			(SELECT supplierName FROM `ie_supplier` s WHERE s.id=supplierId LIMIT 1) AS supplierName,
+			SUM(`totalBalanceAfter`) totalBalanceAfter
+			FROM `ie_purchase` 
+			WHERE status=1 AND isPaid=0 AND totalBalanceAfter>0 ";
+    		return $db->fetchAll($sql);
+    }
+
 	
 	
     

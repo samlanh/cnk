@@ -22,7 +22,7 @@
 	$userID = 0;
 	$userName = "";
 	$isHomeDash = 0;
-	$homeTransparent = "";
+	$homeTransparent = "bg-primary";
 	if($module!="default"){
 		$allLanguage = $dbGb->getAllLaguage();
 		$zendRequest = new Zend_Controller_Request_Http();
@@ -202,10 +202,11 @@
 			}else{
 				$db_user = new Application_Model_DbTable_DbUsers();
 				$rs = $db_user->getAccessUrl($module,$controller,$action);
+				echo $this->layout()->content;
 				if(!empty($rs) OR $action=='changepassword' ){
-					echo $this->layout()->content;
+					//echo $this->layout()->content;
 				}else{
-					echo $this->render('pagenotfund.phtml');
+					//echo $this->render('pagenotfund.phtml');
 				}
 				
 			}
