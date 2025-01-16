@@ -2,7 +2,7 @@
 
 class Section_ProductionController extends Zend_Controller_Action
 {
-	const REDIRECT_URL = '/section';
+	const REDIRECT_URL = '/section/production';
     public function init()
     {    	
         /* Initialize action controller here */
@@ -19,8 +19,9 @@ class Section_ProductionController extends Zend_Controller_Action
 			}else{
 				$search = array(
                     'advSearch' => '',
-					'startDate' => '',
-					'endDate' => date('Y-m-d'),
+					'isVoid' => -1,
+					'startDate'  => date('Y-m-d'),
+					'endDate'    => date('Y-m-d'),
                 );
 			}
 			$db = new Section_Model_DbTable_DbProduction();
@@ -30,11 +31,6 @@ class Section_ProductionController extends Zend_Controller_Action
 			Application_Form_FrmMessage::message("Application Error");
 			Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
 		}
-        
-        $form = new Section_Form_FrmProduct();
-		$formAdd = $form->FrmAddProduct();
-		$this->view->frm = $formAdd;
-		Application_Model_Decorator::removeAllDecorator($formAdd);
 
 		$form = new Application_Form_FrmCombineSearchGlobal();
 		$forms = $form->FormSearchProduct();
@@ -65,32 +61,33 @@ class Section_ProductionController extends Zend_Controller_Action
     }
     public function editAction()
     {
-        if($this->getRequest()->isPost()){
-			$_data = $this->getRequest()->getPost();
-            $sms="EDIT_SUCCESS";
-			try{
-				$sms="EDIT_SUCCESS";
-				$_dbmodel = new Section_Model_DbTable_DbProduction();
-			    $_dbmodel->updateProduct($_data);
-				Application_Form_FrmMessage::Sucessfull($sms,"/section/product");
-			}catch(Exception $e){
-				Application_Form_FrmMessage::message("EDIT_FAIL");
-				Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
-			}		
-		}
-
-        $id=$this->getRequest()->getParam("id");
-		$db = new Section_Model_DbTable_DbProduction();
-		$rs=$db->getProductById($id);
-		$rsdetail=$db->getProductMaterialById($id);
-		$this->view->rs = $rs;
-		$this->view->rsdetail = $rsdetail;
-
-		$form = new Section_Form_FrmProduct();
-		$formAdd = $form->FrmAddProduct($rs);
-		$this->view->frm = $formAdd;
-		Application_Model_Decorator::removeAllDecorator($formAdd);
+        
     }
+	function voidAction(){
+		$db = new Section_Model_DbTable_DbProduction();
+		$id=$this->getRequest()->getParam('id');
+		if (!empty($id)){
+			try{
+				$row = $db->getProductionById($id);
+				if (empty($row)){
+					Application_Form_FrmMessage::Sucessfull("គ្មានទិន្ន័យ",self::REDIRECT_URL."/index");
+				}else if ($row['isVoid']==1){
+					Application_Form_FrmMessage::Sucessfull("មោឃៈរួចរាល់ !",self::REDIRECT_URL."/index");
+				}else{
+					$db->VoidProdution($row);
+					Application_Form_FrmMessage::Sucessfull("មោឃៈជោគជ័យ",self::REDIRECT_URL."/index");
+				}
+			}catch (Exception $e){
+				Application_Form_FrmMessage::message("Void Faile");
+				Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
+			}
+		}else{
+			Application_Form_FrmMessage::message("No Product to void! please check again.");
+			$this->_redirect("/section/production");
+	
+		}
+			
+	}
 	
 }
 

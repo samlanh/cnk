@@ -3,8 +3,8 @@
 	$pageTitle = $tr->translate("ផលិតផល");
 	$this->headTitle($pageTitle);
 	echo $this->headTitle();
+	$dbp= new Section_Model_DbTable_DbProduction;
 	
-	$frm = $this->frm;
 	$formSearch = $this->formSearch;
 	$urlEdit = $this->baseUrl()."/section/production/edit/id/";
 	
@@ -22,39 +22,90 @@
 						<i class="text-primary fa fa-filter "></i>
 					</a>
 				</div>
-				<?php if(!empty($this->rs)){?>
-				<div class="dz-list data-list">
+				<div class="list item-list recent-jobs-list">
 					<ul>
-					<?php $i=0; 
-						foreach($this->rs AS $rs){ $i++;
-							$status=$statusClose;
-							if($rs["status"]==1){
-								$status=$statusCheck;
-							}
-						
-						?>
-						<li>
-							<div  class="item-content item-link">
-								<div class="dz-icon bg-primary light">
-									<?php echo $i;?>                                  
+						<?php
+						 if(!empty($this->rs)) { foreach($this->rs as $row) { 
+								$date = new DateTime($row["productionDate"]);
+								$forDateMonth =  $date->format("M");
+								$forDateYear =  $date->format("Y");
+								$forDateDay =  $date->format("d");
+								$status=$statusClose;
+								if($row["isVoid"]==0){
+									$status=$statusCheck;
+								}
+							?>
+							<li>
+								<div class="item-content align-items-center justify-content-between pt-2">
 								</div>
-								<div class="dz-inner d-flex align-items-center w-100">
-									<div class="flex-1">
-										<span class="dz-title"><?php echo $rs["productionDate"];?></span>
-										<span class="text-red d-block"><i class="fa-solid fa-list me-2"></i><?php echo $rs['counter']; ?></span>
-										<span class="text-blue d-block"><i class="fa-regular fa-note-sticky me-2"></i><?php echo $rs['note']; ?></span>
+								<div class="item-content align-items-center justify-content-between mb-2">
+									<div class="media-55 rounded-2 bg-primary d-flex justify-content-center align-items-center flex-column" >
+										<small class="item-title text-white lh-sm"><?php echo $forDateDay;?></small>
+										<small class="item-title text-white lh-sm"><?php echo $forDateMonth;?></small>
+										<small class="item-title text-white lh-sm" ><?php echo $forDateYear;?></small>
 									</div>
-									<?php echo $status;?>
-									<a class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
-									<i class="fa fa-edit"></i>
-									</a>
+									<div class="row m-0" style="width:100%;">
+										<div class="col-8">
+											<div class="d-flex align-items-center mb-0">
+												អ្នករាប់់ :
+												<div class="item-price text-red ms-2"><?php echo $row["counter"];?></div>
+											</div>
+											<div class="d-flex align-items-center mb-0">
+												ចំណាំ :
+												<div class="item-price text-red ms-2"><?php echo $row["note"];?></div>
+											</div>
+										</div>
+										<div class="col-4 d-flex justify-content-around  align-items-center align-content-center  flex-row">
+											<div ><?php echo $status;?></div>
+											<div >
+												<div class="basic-dropdown">
+													<div class="dropdown">
+														<button type="button" class="btn btn-body dropdown-toggle" data-bs-toggle="dropdown">
+														<i class="fa fa-ellipsis-v me-2"></i>
+														</button>
+														<div class="dropdown-menu">
+															<a class="dropdown-item" onclick="VoidForm('<?php echo $row['id']; ?>');" href="javascript:void(0);"><i class="text-primary fa fa-xmark me-2"></i> <?php echo $tr->translate("ទុកជាមោឃៈ");?></a>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
-							</div>
-						</li>
-						<?php } ?>
-					</ul>         
-				</div>    
-				<?php } ?>     
+								<div class="sortable-handler">
+									<table id="materialTable" class="table table-striped">
+										<thead>
+											<tr class="table-info">
+												<th class="text-center" colspan="3">ទំនិញ</th>
+											</tr>
+											<tr class="table-active">
+												<th>ល.រ</th>
+												<th>ឈ្មោះ</th>
+												<th>ចំនួន</th>
+											</tr>
+										</thead>
+										<tbody>
+											<?php
+												$rsDetail = $dbp->getProductdetailById($row['id']);
+												$i=0;
+												if(!empty($rsDetail))foreach ($rsDetail AS $rs) {
+												$i++;
+											?>
+												<tr >
+													<td ><?php echo $i; ?></td>
+													<td ><?php echo $rs['productName'];?></td>
+													<td ><?php echo $rs['quantity'];?></td>
+												</tr>
+											<?php } ?>	 
+										</tbody>
+									</table>
+								</div>
+							</li>
+							
+						<?php }}?>
+				   </ul>
+				</div>   
+
 			</div>    
 		</div>
 	</div>
@@ -79,9 +130,21 @@
 							</div>
 							<div class="mb-1 form-input">
 								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
 								   <i class="fa fa-list-check"></i>
 								</span>
-								<?php echo $formSearch->getElement('status');?>
+								<?php echo $formSearch->getElement('isVoid');?>
 							</div>	
 						</div>
 					</div>
@@ -98,4 +161,18 @@
 $( document ).ready(function() {
     $('.classHeadTitle').html("<?php echo $pageTitle;?>");
 });
+
+function VoidForm(index) {
+	url='<?php echo $this->baseUrl()."/section/production/void/id/";?>';
+    const confirmed = confirm("តើអ្នកចង់មោឃៈផលិតផលនេះទេ?"); 
+    if (confirmed) {
+		 if(index!=''){
+			window.location.href = url+index;
+		}else{
+			alert('Please select record you want to void');
+			return false;
+		}
+    }
+    return false;
+}
 </script>

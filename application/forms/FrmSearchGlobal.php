@@ -27,12 +27,6 @@ Class Application_Form_FrmSearchGlobal extends Zend_Dojo_Form {
 				'placeholder'=>$this->tr->translate("START_DATE"),
 				'data-date-format' => 'yyyy-mm-dd',
 		));
-		$_date = $this->request->getParam("startDate");
-		if(empty($_date)){
-			$_date = date("d-m-Y");
-		}
-		$_date = date("d-m-Y",strtotime($_date));
-		$_startDateSearch->setValue($_date);
 		return $_startDateSearch;
 	}
 	function getEndDateSearch($_data=null){

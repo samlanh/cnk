@@ -44,6 +44,7 @@
 				'outstandingQty'=> $_data['outstandingQty'],
 				'costPrice'		=> $_data['costPrice'],
 				'measure'		=> $_data['measure'],
+				'note'			=> $_data['note'],
 				'createDate' 	=> date("Y-m-d"),
 				'status'		=> 1,
 				'userId'		=> $this->getUserId()
@@ -81,6 +82,7 @@
 				'outstandingQty'=> $_data['outstandingQty'],
 				'costPrice'		=> $_data['costPrice'],
 				'measure'		=> $_data['measure'],
+				'note'			=> $_data['note'],
 				'status'		=> $status,
 				'userId'		=> $this->getUserId()
 	  		);
