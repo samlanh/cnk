@@ -7,13 +7,6 @@
     }
     function getAllProduct($search){
 		$db = $this->getAdapter();
-		
-		$startdatetimestamp = strtotime($search['startDate']);
-		$startDateFormat = date('Y-m-d', $startdatetimestamp);
-
-		$enddatetimestamp = strtotime($search['endDate']);
-		$endDateFormat = date('Y-m-d', $enddatetimestamp);
-
 	
 		$sql = "SELECT *,
 			CASE
@@ -22,9 +15,9 @@
 			END as Type
 		 FROM `ie_product`  WHERE 1 ";
 		$where = '';
-		$startDate = (empty($startDateFormat)) ? '1' : "createDate >= '" . $startDateFormat . " 00:00:00'";
-		$endDate = (empty($endDateFormat)) ? '1' : "createDate <= '" . $endDateFormat . " 23:59:59'";
-		$where .= " AND " . $startDate . " AND " . $endDate;
+		// $startDate = (empty($startDateFormat)) ? '1' : "createDate >= '" . $startDateFormat . " 00:00:00'";
+		// $endDate = (empty($endDateFormat)) ? '1' : "createDate <= '" . $endDateFormat . " 23:59:59'";
+		// $where .= " AND " . $startDate . " AND " . $endDate;
 		
 		if(!empty($search['advSearch'])){
 			$s_where = array();
@@ -38,7 +31,7 @@
 		if($search['status'] > -1 ){
 			$where .=' AND status= '.$search['status'];
 		}
-		$order = ' ORDER BY id DESC ';
+		$order = ' ORDER BY proType,id DESC ';
 		return $db->fetchAll($sql.$where.$order);
 	}
 	public function addProduct($_data){
@@ -51,6 +44,7 @@
 				'outstandingQty'=> $_data['outstandingQty'],
 				'costPrice'		=> $_data['costPrice'],
 				'measure'		=> $_data['measure'],
+				'note'			=> $_data['note'],
 				'createDate' 	=> date("Y-m-d"),
 				'status'		=> 1,
 				'userId'		=> $this->getUserId()
@@ -88,6 +82,7 @@
 				'outstandingQty'=> $_data['outstandingQty'],
 				'costPrice'		=> $_data['costPrice'],
 				'measure'		=> $_data['measure'],
+				'note'			=> $_data['note'],
 				'status'		=> $status,
 				'userId'		=> $this->getUserId()
 	  		);

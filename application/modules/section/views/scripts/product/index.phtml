@@ -1,6 +1,6 @@
  <?php
 	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
-	$pageTitle = $tr->translate("PRODUCT");
+	$pageTitle = $tr->translate("ទំនិញ");
 	$this->headTitle($pageTitle);
 	echo $this->headTitle();
 	
@@ -23,18 +23,6 @@
 						<i class="text-primary fa fa-filter "></i>
 					</a>
 				</div>
-				<!-- <form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'index')); ?>" method="POST" >
-					<div class="input-group search-input">
-						<?php echo $frm->getElement('search');?>
-					</div>
-					<div class="filter-area">
-						<div>
-							<h5><?php echo $pageTitle; ?></h5>
-							<span><?php echo count($this->rs); ?> <?php echo $tr->translate("PRODUCT"); ?></span>
-						</div>
-						<button type="submit" class="btn  filter-btn bg-skyblue light"><i class="fa-solid fa-magnifying-glass"></i></button>
-					</div>
-				</form> -->
 				<?php if(!empty($this->rs)){?>
 				<div class="dz-list data-list">
 					<ul>
@@ -44,18 +32,25 @@
 							if($rs["status"]==1){
 								$status=$statusCheck;
 							}
+							$bgclass="dz-title";
+							$bgtype="text-red";
+							if($rs["proType"]==2){
+								$bgclass="text-skyblue fw-700";
+								$bgtype="text-yellow";
+							}
 						
 						?>
 						<li>
-							<div  class="item-content item-link">
+							<div  class="item-content item-link ">
 								<div class="dz-icon bg-primary light">
 									<?php echo $i;?>                                  
 								</div>
 								<div class="dz-inner d-flex align-items-center w-100">
-									<div class="dz-title flex-1">
-										<span class="dz-title"><?php echo $rs["productName"];?></span>
-										<span class="text-red d-block"><i class="fa-solid fa-list me-2"></i><?php echo $rs['Type']; ?></span>
-										<span class="text-blue d-block"><i class="fa-solid fa-layer-group"></i>   <?php echo $rs['outstandingQty']." ".$rs['measure']; ?></span>
+									<div class="flex-1">
+										<span class="<?php echo $bgclass;?>"><?php echo $rs["productName"];?></span>
+										<span class="<?php echo $bgtype;?> d-block"><i class="fa-solid fa-list me-2"></i><?php echo $rs['Type']." ".$rs['note']; ?></span>
+										<span class="text-blue d-block"><i class="fa-solid fa-layer-group me-2"></i><?php echo $rs['outstandingQty']." ".$rs['measure']; ?></span>
+										<span class="text-blue d-block"><i class="fa-solid fa-dollar-sign me-2"></i><?php echo $rs['costPrice']; ?></span>
 									</div>
 									<?php echo $status;?>
 									<a class="btn light btn-warning fs-6 p-2 ms-2 fw-normal" href="<?php echo $urlEdit.$rs["id"]; ?>" >
@@ -95,18 +90,6 @@
 									<i class="fa fa-list-check"></i>
 								</span>
 								<?php echo $formSearch->getElement('proType');?>
-							</div>
-							<div class="mb-1 form-input">
-								<span class="input-icon">
-								   <i class="fa fa-calendar-days"></i>
-								</span>
-								<?php echo $formSearch->getElement('startDate');?>
-							</div>
-							<div class="mb-1 form-input">
-								<span class="input-icon">
-								   <i class="fa fa-calendar-days"></i>
-								</span>
-								<?php echo $formSearch->getElement('endDate');?>
 							</div>
 							<div class="mb-1 form-input">
 								<span class="input-icon">
