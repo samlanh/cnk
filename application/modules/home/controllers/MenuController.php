@@ -1,6 +1,6 @@
 <?php
 
-class Home_IndexController extends Zend_Controller_Action
+class Home_MenuController extends Zend_Controller_Action
 {
 	const REDIRECT_URL = '/home';
     public function init()
@@ -13,9 +13,9 @@ class Home_IndexController extends Zend_Controller_Action
     public function indexAction()
     {
 		$dbDash = new Home_Model_DbTable_DbDashboard();
-		$this->view->bankAcc = $dbDash->getBankAccountBalance();
-		
-		$this->view->supplierDept = $dbDash->getAllSupplierBalance();
+		$this->view->productDisplay = $dbDash->getProductDisplay();
+		$this->view->getAllCustomerBalance = $dbDash->getAllCustomerBalance();
+		$this->view->supplierBalance = $dbDash->getAllSupplierBalance();
     	
     }
 
