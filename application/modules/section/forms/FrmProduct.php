@@ -83,6 +83,13 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 			'autocomplete'=>'off'
 		));
 
+		$note = new Zend_Form_Element_Textarea("note");
+		$note->setAttribs(array(
+				'class'=>'form-control',
+				'rows'=>'4',
+				'placeholder'=>$this->tr->translate("NOTE"),
+		));
+
 		$id = new Zend_Form_Element_Hidden("id");
     	
     	if(!empty($data)){
@@ -91,6 +98,7 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
     		$costPrice->setValue($data["costPrice"]);
     		$proType->setValue($data["proType"]);
     		$measure->setValue($data["measure"]);
+    		$note->setValue($data["note"]);
     		$id->setValue($data["id"]);
     	}
     	
@@ -102,6 +110,7 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 				$proType,
 				$materialId,
 				$measure,
+				$note,
 				$id
     			
     		));
@@ -121,7 +130,7 @@ class Section_Form_FrmProduct extends Zend_Dojo_Form
 		$productionDate = new Zend_Form_Element_Text("productionDate");
 		$productionDate->setAttribs(array(
 				'class'=>'form-control datepicker',
-				'placeholder'=>$this->tr->translate("DATE"),
+				'placeholder'=>$this->tr->translate("ថ្ងៃផលិត"),
 				'required'=>'required'
 		));
 		$productionDate->setValue($todayDate);

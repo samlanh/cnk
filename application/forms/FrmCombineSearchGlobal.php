@@ -105,6 +105,7 @@ Class Application_Form_FrmCombineSearchGlobal extends Zend_Dojo_Form {
 		$startDate = $frm->getStartDateSearch($search);
 		$endDate = $frm->getEndDateSearch($search);
 		$status = $frm->getStatusSearch($search);
+		$isVoid = $frm->getIsVoidSearch($search);
 	
 		
 		$this->addElements(array(
@@ -113,6 +114,7 @@ Class Application_Form_FrmCombineSearchGlobal extends Zend_Dojo_Form {
 			$startDate,
 			$endDate,
 			$status,
+			$isVoid
 		));
 		return $this;
 	}
