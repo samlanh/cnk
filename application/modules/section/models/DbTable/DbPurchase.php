@@ -16,12 +16,9 @@
 		
 
 		$sql = "SELECT pc.*,
-			s.`supplierName`,
-			p.`productName`
-
+			s.`supplierName`
 			FROM ie_purchase AS pc
 			LEFT JOIN `ie_supplier` AS s ON s.`id` = pc.`supplierId`
-			LEFT JOIN `ie_product` AS p ON p.`id`= pc.`productId`
 
 			WHERE 1 ";
 		$where = '';
@@ -37,14 +34,15 @@
 		if(!empty($search['supplierId'])){
 			$where .=' AND pc.supplierId= '.$search['supplierId'];
 		}
-		if(!empty($search['productId'])){
-			$where .=' AND pc.productId= '.$search['productId'];
-		}
+		// if(!empty($search['productId'])){
+		// 	$where .=' AND pc.productId= '.$search['productId'];
+		// }
 		if($search['isPaid'] > -1 ){
 			$where .=' AND pc.isPaid= '.$search['isPaid'];
 		}
 		$order = ' ORDER BY pc.id DESC ';
-		//echo $sql.$where.$order;//exit();
+		// echo $sql . $where . $order;
+		// exit();
 		return $db->fetchAll($sql.$where.$order);
 	}
 	public function getInvoiceNo(){
@@ -62,19 +60,15 @@
     }
 	public function addPurchase($_data){
 		$db = $this->getAdapter();
+		$db->beginTransaction();
 		try{
 	  		$arr = array(
 				'supplierId'	=> $_data['supplierId'],
-				'productId'		=> $_data['productId'],
 				'invoiceNo'		=> $_data['invoiceNo'],
 				'purchaseNo'	=> $_data['purchaseNo'],
 				'poDate'		=> date('Y-m-d', strtotime($_data['poDate'])),
-				'qty'			=> $_data['qty'],
-				'unitPrice'		=> $_data['unitPrice'],
-				'totalPrice'	=> $_data['totalPrice'],
-				'litterPrice'	=> $_data['litterPrice'],
-				'outstandingBalance'	 => $_data['totalPrice'],
-				'outstandingBalanceAfter'=> $_data['totalPrice'],
+				'totalAmount'	=> $_data['totalPrice'],
+				'totalBalanceAfter'	 => $_data['totalPrice'],
 				'note'			=> $_data['note'],
 				'createDate' 	=> date("Y-m-d"),
 				'status'		=> 1,
@@ -82,9 +76,28 @@
 	  		);
 			
 			$this->_name="ie_purchase";
-			$this->insert($arr);
+			$poId = $this->insert($arr);
+
+			$this->_name="ie_purchase_detail";
+			$ids = explode(',',$_data['selectedIndexes']);
+			if (!empty($ids)) {
+				foreach($ids as $id){
+					$arr = array(
+							'purchaseId'=>$poId,
+							'productId'=>$_data['id_'.$id],
+							'qty'=>$_data['quantity_'.$id],
+							'unitPrice'=>$_data['unitPrice_'.$id],
+							'totalPrice'=>$_data['totalPrice_'.$id],
+	
+					);
+					$this->insert($arr);
+				}
+			}
+			$db->commit();
+
 		}catch (Exception $e){
 			Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
+			$db->rollBack();
 		}
 	}
 	public function updatePurchase($_data){
@@ -121,32 +134,16 @@
 		$sql = "SELECT  * FROM `ie_purchase`  WHERE 1 AND id= ".$id;
 		return $db->fetchRow($sql);
 	}
-	public function getAllProductList($data=array()){
+	function getPurchaseDetailById($id){
 		$db = $this->getAdapter();
-		$sql = " 
-			SELECT 
-				p.`id` AS id
-				,p.productName AS `name`
-				,p.`litterUnit`
-				
-		";
-		$fromStatment = " FROM `ie_product` AS p  ";
-		$where = " WHERE 1 AND p.status=1 ";
-		
-		$sql.=$fromStatment;
-		$sql.=$where;
-		
-		$rows = $db->fetchAll($sql);
-		if (!empty($data['option'])) {
-			$options = '';
-			if (!empty($rows)){
-				foreach ($rows as $value) {
-					$options .= '<option  data-record-info="' . htmlspecialchars(Zend_Json::encode($value)) . '"  value="' . $value['id'] . '" >' . htmlspecialchars($value['name']) . '</option>';
-				}
-			}
-			return $options;
-		} else {
-			return $rows;
-		}
+		$sql = "SELECT  
+					pd.productId,
+					pd.qty,
+					pd.unitPrice,
+					pd.totalPrice, 
+			(SELECT p.productName FROM `ie_product` p WHERE p.id=pd.productId LIMIT 1) as productName
+		FROM `ie_purchase_detail` pd  WHERE pd.purchaseId= ".$id;
+		return $db->fetchAll($sql);
 	}
+	
 }

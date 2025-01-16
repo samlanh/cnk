@@ -7,7 +7,11 @@
 	
 	$frm = $this->frm;
 	
-?>
+?><style>
+	.form-control {
+    padding: 10px 10px;
+}
+</style>
 	<div class="container fb">
 		<div class="col-12">
 			<div class="card">
@@ -43,24 +47,28 @@
 								<span class="input-icon">
 									<i class="fa-solid fa-gas-pump"></i>
 								</span>
-								<select class="form-control-select" name="productId" id="productId" onchange="calculateTotalPrice()">
+								<select class="form-control-select" name="materialId" id="materialId" onchange="addRow()">
  										<option value=""><?php echo $tr->translate("Select Product"); ?></option>
 									<?php if(!empty($this->product)){ foreach($this->product as $key=>$value){ ?>
-										<option <?php if($value['id']==$this->rs['productId']){ echo "selected";} ?>  data-record-info="<?php echo htmlspecialchars(Zend_Json::encode($value)) ?>"  value="<?php echo $value['id'] ?>" ><?php echo  htmlspecialchars($value['name']) ?></option​>
+										<option data-record-info="<?php echo htmlspecialchars(Zend_Json::encode($value)) ?>"  value="<?php echo $value['id'] ?>" ><?php echo  htmlspecialchars($value['name']) ?></option​>
 									<?php }} ?>
 								</select>
 							</div>
-							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-gas-pump"></i>
-								</span>
-								<?php echo $frm->getElement('qty');?>
-							</div>
-							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-dollar-sign"></i>
-								</span>
-								<?php echo $frm->getElement('unitPrice');?>
+							<div class="mb-3 form-input materialSetting">
+								<table id="materialTable" class="table table-striped">
+									<thead>
+										<tr class="table-active">
+											<th>ល.រ</th>
+											<th>លុប</th>
+											<th>ឈ្មោះ</th>
+											<th>ចំនួន/តម្លៃ</th>
+											<th>សរុប</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+								<input type="hidden" id="selectedIndexes" name="selectedIndexes" value="" />
 							</div>
 							<div class="mb-3 form-input">
 								<span class="input-icon">
@@ -68,12 +76,7 @@
 								</span>
 								<?php echo $frm->getElement('totalPrice');?>
 							</div>
-							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-dollar-sign"></i>
-								</span>
-								<?php echo $frm->getElement('litterPrice');?>
-							</div>
+							
 							<div class="mb-3 form-input">
 								<?php echo $frm->getElement('note');?>
 							</div>
@@ -99,37 +102,212 @@ $( document ).ready(function() {
 			alert("Select Supplier!");
 			return false;
 		}
-		const productId = document.getElementById('productId').value;
-		if(productId==''){
-			alert("Select Product!");
-			return false;
-		}
 	  return true;
 	});
+	generateOldData();
 });
+function generateOldData(){
+	
+    const table = $('#materialTable tbody');
 
-function calculateTotalPrice() {
+    <?php if (!empty($this->rsDetail)) { ?>
+        <?php foreach ($this->rsDetail as $key => $oldData) { ?>
+            const currentIndex = <?php echo $key + 1; ?>; // Use PHP to pass the index
+            const materialId = "<?php echo $oldData['productId']; ?>"; // Replace with your actual field
+            const materialLabel = "<?php echo $oldData['productName']; ?>"; // Replace with your actual field
+            const quantity = "<?php echo $oldData['qty']; ?>"; // Replace with your actual field
+            const unitPrice = "<?php echo $oldData['unitPrice']; ?>"; // Replace with your actual field
+            const totalPrice = "<?php echo $oldData['totalPrice']; ?>"; // Replace with your actual field
 
-	const productId = document.getElementById('productId').value;
-	if(productId==''){
-		document.getElementById('totalPrice').value = 0.00;
-		document.getElementById('litterPrice').value = 0.00;
-	}else{
-		const selectElement = document.getElementById('productId');
-		const selectedOption = selectElement.options[selectElement.selectedIndex];
-		// Retrieve the data-record-info attribute from the selected option
-		const recordInfo = selectedOption.getAttribute('data-record-info');
-		// Parse the JSON string into a JavaScript object
-		const recordData = JSON.parse(recordInfo);
+            const newRow = `
+                <tr data-id="${materialId}" data-index="${currentIndex}">
+                    <td>${currentIndex}</td>
+                    <td><i class="deleteRow fa-solid fa-trash" style="cursor: pointer;"></i></td>
+                    <td>${materialLabel}
+                        <input 
+                            type="hidden" 
+                            class="form-control-sm material" 
+                            name="id_${currentIndex}" 
+                            id="id_${currentIndex}" 
+                            value="${materialId}" 
+                        />
+                    </td>
+                    <td>
+                        <input 
+                            type="number" 
+                            class="form-control form-control-number" 
+                            onkeyup="calculatePrice(${currentIndex})"
+                            name="quantity_${currentIndex}" 
+                            id="quantity_${currentIndex}" 
+                            placeholder="ចំនួន" 
+                            value="${quantity}" />
+                        <input 
+                            type="number" 
+                            class="form-control form-control-number" 
+                            onkeyup="calculatePrice(${currentIndex})"
+                            name="unitPrice_${currentIndex}" 
+                            id="unitPrice_${currentIndex}" 
+                            placeholder="តម្លៃរាយ" 
+                            value="${unitPrice}" />
+                    </td>
+                    <td>
+                        <input 
+                            type="number" 
+                            class="form-control form-control-number" 
+                            name="totalPrice_${currentIndex}" 
+                            id="totalPrice_${currentIndex}" 
+                            value="${totalPrice}" 
+                            readonly />
+                    </td>
+                </tr>
+            `;
 
-		const litterUnit = parseFloat(recordData.litterUnit) || 1;
-		const qty = parseFloat(document.getElementById('qty').value) || 0;
-		const unitPrice = parseFloat(document.getElementById('unitPrice').value) || 0;
-		
-		const totalPrice = (qty/litterUnit) * unitPrice;
-		const litterPrice = unitPrice/litterUnit ;
-		document.getElementById('totalPrice').value = totalPrice.toFixed(2);
-		document.getElementById('litterPrice').value = litterPrice.toFixed(2);
-	}
+            table.append(newRow); // Append the row to the table
+			// Update hidden inputs to include the new materialId and index
+			updateHiddenInputs();
+
+			table.find('tr:last-child .deleteRow').on('click', function () {
+			$(this).closest('tr').remove();
+			updateIndexes(); // Recalculate row indexes after deletion
+			// Update hidden inputs after deletion
+			});
+        <?php } ?>
+    <?php } ?>
+
+}
+
+function addRow() {
+  
+  const materialId = document.getElementById('materialId').value;
+  const materialLabel = document.getElementById('materialId').options[document.getElementById('materialId').selectedIndex].text;
+
+
+  // Make an AJAX POST request to fetch material info
+ 
+      const table = $('#materialTable tbody');
+
+      // Check if the material is already in the table
+      if ($(`#materialTable tbody tr[data-id='${materialId}']`).length) {
+        alert("រើសរួចហើយ");
+        return;
+      }
+
+      // Get the current index (row count + 1 for the new row)
+      const currentIndex = table.children().length + 1;
+
+      // Add a new row with material details
+      const newRow = `
+        <tr data-id="${materialId}" data-index="${currentIndex}">
+          <td>${currentIndex}</td>
+          <td><i class="deleteRow fa-solid fa-trash" style="cursor: pointer;"></i></td>
+          <td>${materialLabel} 
+		  	<input 
+				type="hidden" 
+				class="form-control-sm material" 
+				name="id_${currentIndex}" 
+				id="id_${currentIndex}" 
+				value="${materialId}" 
+			 />
+		  </td>
+          <td>
+            <input 
+				type="number" 
+				class="form-control form-control-number" 
+				onkeyup="calculatePrice(${currentIndex})"
+				name="quantity_${currentIndex}" 
+				id="quantity_${currentIndex}" 
+				placeholder="ចំនួន" 
+				value="" />
+				<input 
+				type="number" 
+				class="form-control form-control-number" 
+				onkeyup="calculatePrice(${currentIndex})"
+				name="unitPrice_${currentIndex}" 
+				id="unitPrice_${currentIndex}" 
+				placeholder="តម្លៃរាយ" 
+				value="" 
+				 />
+          </td>
+		  <td>
+            <input 
+				type="number" 
+				class="form-control form-control-number" 
+				name="totalPrice_${currentIndex}" 
+				id="totalPrice_${currentIndex}" 
+				readonly    />
+          </td>
+         
+        </tr>
+      `;
+      table.append(newRow);
+
+      // Update hidden inputs to include the new materialId and index
+      updateHiddenInputs();
+
+      table.find('tr:last-child .deleteRow').on('click', function () {
+        $(this).closest('tr').remove();
+        updateIndexes(); // Recalculate row indexes after deletion
+       // Update hidden inputs after deletion
+      });
+}
+
+// Function to update indexes after deleting rows
+function updateIndexes() {
+  $('#materialTable tbody tr').each(function (index, row) {
+    const newIndex = index + 1;
+
+    // Update the index in the first cell
+    $(row).find('td:first').text(newIndex);
+
+    // Update data attribute and input names/IDs
+    $(row).attr('data-index', newIndex);
+    $(row).find('.material').attr('name', `id_${newIndex}`).attr('id', `id_${newIndex}`);
+    $(row).find('.quantity').attr('name', `quantity_${newIndex}`).attr('id', `quantity_${newIndex}`);
+  });
+  updateHiddenInputs(); 
+  calculateTotalAmount();
+}
+
+// Function to update hidden inputs for material IDs and indexes
+function updateHiddenInputs() {
+  const indexes = [];
+  $('#materialTable tbody tr').each(function (index, row) {
+    const newIndex = index + 1;
+	indexes.push(newIndex);
+  });
+
+  $('#selectedIndexes').val(indexes.join(','));
+}
+
+function calculatePrice(currentIndex){
+	const quantity = document.getElementById(`quantity_${currentIndex}`).value;
+	const unitPrice = document.getElementById(`unitPrice_${currentIndex}`).value;
+	const totalPrice = quantity*unitPrice;
+	
+	if (!isNaN(totalPrice)) {
+        document.getElementById(`totalPrice_${currentIndex}`).value = totalPrice.toFixed(2); // Format to 2 decimal places
+    } else {
+        document.getElementById(`totalPrice_${currentIndex}`).value = ''; // Clear field if calculation fails
+    }
+	calculateTotalAmount();
+}
+function calculateTotalAmount() {
+    const totalFields = document.querySelectorAll('[id^="totalPrice_"]');
+    let grandTotal = 0;
+
+    // Iterate through each total price field and sum up the values
+    totalFields.forEach((field) => {
+        const value = parseFloat(field.value); // Parse the value as a number
+        if (!isNaN(value)) {
+            grandTotal += value; // Add valid values to the grand total
+        }
+    });
+
+    // Update the total amount field
+    const totalAmountField = document.getElementById('totalPrice');
+	totalAmountField.value="";
+    if (grandTotal) {
+        totalAmountField.value = grandTotal.toFixed(2); // Format to 2 decimal places
+    }
 }
 </script>

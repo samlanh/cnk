@@ -53,12 +53,14 @@ class Section_PurchaseController extends Zend_Controller_Action
 			}catch(Exception $e){
 				Application_Form_FrmMessage::message("INSERT_FAIL");
 				Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());
-				echo $e->getMessage(); exit();
 			}		
 		}
 
-		$dbp = new Section_Model_DbTable_DbPurchase();
-		$this->view->product= $dbp->getAllProductList();
+		$dbp = new Section_Model_DbTable_DbProduct();
+		$param = array(
+			'type'=>2
+		);
+		$this->view->product= $dbp->getAllMaterialList($param );
 	
 		$form = new Section_Form_FrmPurchase();
 		$formAdd = $form->FrmAddPurchase();
@@ -82,15 +84,23 @@ class Section_PurchaseController extends Zend_Controller_Action
 		}
 
 		$dbp = new Section_Model_DbTable_DbPurchase();
-		$this->view->product= $dbp->getAllProductList();
 
         $id=$this->getRequest()->getParam("id");
 		$db = new Section_Model_DbTable_DbPurchase();
 		$rs=$db->getPurchaseById($id);
-		if($rs['isPaid']==1 OR $rs['outstandingBalanceAfter'] < $rs['outstandingBalance']){
+		
+		if($rs['isPaid']==1 OR $rs['totalBalanceAfter'] < $rs['totalAmount']){
 			Application_Form_FrmMessage::Sucessfull("Already Paid, Can't Edit!","/section/purchase");
 		}
 		$this->view->rs = $rs;
+		$this->view->rsDetail=$db->getPurchaseDetailById($id);
+
+		$dbp = new Section_Model_DbTable_DbProduct();
+		$param = array(
+			'type'=>2
+		);
+		$this->view->product= $dbp->getAllMaterialList($param );
+
 		$form = new Section_Form_FrmPurchase();
 		$formAdd = $form->FrmAddPurchase($rs);
 		$this->view->frm = $formAdd;

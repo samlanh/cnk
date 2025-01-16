@@ -35,19 +35,6 @@ class Section_Form_FrmPurchase extends Zend_Dojo_Form
 		}
 		$supplierId->setMultiOptions($optSup);
 
-		$productId = new Zend_Form_Element_Select("productId");
-		$productId->setAttribs(array(
-				'class'=>'form-control-select',
-		));
-
-		$dbProduct = new Section_Model_DbTable_DbProduct();
-		$rsProduct = $dbProduct->getAllProductList();
-		$optSup = array();
-		if(!empty($rsProduct)) foreach($rsProduct AS $rs){
-			$optSup[$rs['id']]=$rs['name'];
-		}
-		$productId->setMultiOptions($optSup);
-
     	$invoiceNo = new Zend_Form_Element_Text("invoiceNo");
 		$invoiceNo->setAttribs(array(
 				'class' => 'form-control', // Base class
@@ -76,25 +63,6 @@ class Section_Form_FrmPurchase extends Zend_Dojo_Form
 		));
 		$poDate->setValue($todayDate);
 		
-    	$qty = new Zend_Form_Element_Text("qty");
-		$qty->setAttribs(array(
-			'class'=>'form-control form-control-number',
-			'placeholder'=>$this->tr->translate("QTY"),
-			'required'=>'required',
-			'autocomplete'=>'off',
-			'onkeyup' => 'calculateTotalPrice()'
-	
-		));
-
-		$unitPrice = new Zend_Form_Element_Text("unitPrice");
-		$unitPrice->setAttribs(array(
-			'class'=>'form-control form-control-number',
-			'placeholder'=>$this->tr->translate("UNIT_PRICE"),
-			'required'=>'required',
-			'autocomplete'=>'off',
-			 'onkeyup' => 'calculateTotalPrice()'
-		));
-		
 		$totalPrice = new Zend_Form_Element_Text("totalPrice");
 		$totalPrice->setAttribs(array(
 			'class'=>'form-control form-control-number',
@@ -102,12 +70,6 @@ class Section_Form_FrmPurchase extends Zend_Dojo_Form
 			'readonly' => 'readonly' 
 		));
 	
-		$litterPrice = new Zend_Form_Element_Text("litterPrice");
-		$litterPrice->setAttribs(array(
-			'class'=>'form-control form-control-number',
-			'placeholder'=>$this->tr->translate("LIITER_PRICE"),
-			'readonly' => 'readonly' 
-		));
 
 		$note = new Zend_Form_Element_Textarea("note");
 		$note->setAttribs(array(
@@ -119,11 +81,7 @@ class Section_Form_FrmPurchase extends Zend_Dojo_Form
 		$id = new Zend_Form_Element_Hidden("id");
     	if(!empty($data)){
     		$supplierId->setValue($data["supplierId"]);
-    		$productId->setValue($data["productId"]);
-    		$litterPrice->setValue($data["litterPrice"]);
-    		$totalPrice->setValue($data["totalPrice"]);
-    		$unitPrice->setValue($data["unitPrice"]);
-    		$qty->setValue($data["qty"]);
+    		$totalPrice->setValue($data["totalAmount"]);
     		$invoiceNo->setValue($data["invoiceNo"]);
     		$purchaseNo->setValue($data["purchaseNo"]);
     		$poDate->setValue($data["poDate"]);
@@ -134,11 +92,7 @@ class Section_Form_FrmPurchase extends Zend_Dojo_Form
     	$this->addElements(array(
 				$search,
 				$supplierId,
-				$productId,
-				$litterPrice,
 				$totalPrice,
-				$unitPrice,
-				$qty,
 				$invoiceNo,
 				$purchaseNo,
 				$poDate,

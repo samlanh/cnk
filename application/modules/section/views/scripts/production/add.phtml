@@ -1,6 +1,6 @@
  <?php
 	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
-	$pageTitle = $tr->translate("CREATE_PRODUCT");
+	$pageTitle = $tr->translate("CREATE_PRODUCTION");
 	
 	$this->headTitle($pageTitle);
 	echo $this->headTitle();
@@ -16,42 +16,27 @@
 				</div>
 				<div class="card-body">
 					<div class="basic-form">
-						<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'product','action'=>'add')); ?>" method="POST" >
+						<form id="form-submit" action="<?php echo $this->url(array('module'=>'section','controller'=>'production','action'=>'add')); ?>" method="POST" >
 							<div class="mb-3 form-input">
 								<span class="input-icon">
-									<i class="fa-solid fa-cube"></i>
+									<i class="fa-solid fa-calendar-days"></i>
 								</span>
-								<?php echo $frm->getElement('productName');?>
+								<?php echo $frm->getElement('productionDate');?>
 							</div>
 							<div class="mb-3 form-input">
 								<span class="input-icon">
-									<i class="fa-solid fa-layer-group"></i>
+									<i class="fa-solid fa-user-pen"></i>
 								</span>
-								<?php echo $frm->getElement('proType');?>
+								<?php echo $frm->getElement('counter');?>
 							</div>
 							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-layer-group"></i>
-								</span>
-								<?php echo $frm->getElement('outstandingQty');?>
-							</div>
-							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-dollar-sign"></i>
-								</span>
-								<?php echo $frm->getElement('costPrice');?>
-							</div>
-							<div class="mb-3 form-input">
-								<span class="input-icon">
-									<i class="fa-solid fa-scale-balanced"></i>
-								</span>
-								<?php echo $frm->getElement('measure');?>
+								<?php echo $frm->getElement('note');?>
 							</div>
 							<div class="mb-3 form-input materialSetting">
 								<span class="input-icon">
 									<i class="fa-solid fa-list"></i>
 								</span>
-								<?php echo $frm->getElement('materialId');?>
+								<?php echo $frm->getElement('productId');?>
 							</div>
 							<div class="mb-3 form-input materialSetting">
 								<table id="materialTable" class="table table-striped">
@@ -79,7 +64,6 @@
 
 <script>
 $( document ).ready(function() {
-	changeType();
     $('.classHeadTitle').html("<?php echo $pageTitle;?>");
 	
 	$("#form-submit").submit(function() {
@@ -92,28 +76,15 @@ $( document ).ready(function() {
 	});
 });
 
-function changeType(){
-	const proType = document.getElementById('proType').value;
-
-	$(".materialSetting").css("display", "none");
-	if(proType==1){
-		$(".materialSetting").css("display", "flow-root");
-	}
-}
 
 function addRow() {
 
-  const proType = document.getElementById('proType').value;
-  const materialId = document.getElementById('materialId').value;
+  const materialId = document.getElementById('productId').value;
 
   const url = "<?php echo $this->baseUrl();?>/section/product/get-material-info";
 
-  if(proType!=1) {
-    alert("ជ្រើសរើសប្រភេទទំនិញលក់!");
-    return;
-  }
-  if(!materialId) {
-    alert("ជ្រើសរើសវត្ថុធាតុដើម!");
+  if(!productId) {
+    alert("ជ្រើសរើសផលិតផល!");
     return;
   }
 
@@ -163,7 +134,7 @@ function addRow() {
       `;
       table.append(newRow);
 
-      // Update hidden inputs to include the new materialId and index
+      // Update hidden inputs to include the new productId and index
       updateHiddenInputs();
 
       table.find('tr:last-child .deleteRow').on('click', function () {
@@ -204,8 +175,11 @@ function updateHiddenInputs() {
   
   });
 
- // $('#selectedMaterials').val(materialIds.join(','));
+ // $('#selectedMaterials').val(productIds.join(','));
   $('#selectedIndexes').val(indexes.join(','));
 }
+
+
+
 
 </script>
