@@ -47,6 +47,9 @@
 								</span>
 								<?php echo $frm->getElement('measure');?>
 							</div>
+							<div class="mb-3 form-input">
+								<?php echo $frm->getElement('note');?>
+							</div>
 							<div class="mb-3 form-input materialSetting">
 								<span class="input-icon">
 									<i class="fa-solid fa-list"></i>
@@ -57,10 +60,10 @@
 								<table id="materialTable" class="table table-striped">
 									<thead>
 										<tr class="table-active">
-											<th>ល.រ</th>
+											<th width="5%">ល.រ</th>
 											<th>ឈ្មោះ</th>
-											<th>ចំនួន</th>
-											<th>លុប</th>
+											<th width="20%">ចំនួន</th>
+											<th width="5%">លុប</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -154,7 +157,7 @@ function addRow() {
 				placeholder="ចំនួន" 
 				value="1" 
 				min="1" 
-				style="width: 150px; font-weight: bold; color: red;"  />
+				style="width: 100%; font-weight: bold; color: red;"  />
           </td>
           <td>
 		  	<i class="deleteRow fa-solid fa-trash"></i>

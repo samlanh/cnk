@@ -19,14 +19,12 @@ class Section_ProductionController extends Zend_Controller_Action
 			}else{
 				$search = array(
                     'advSearch' => '',
-                    'proType' => '',
-					'status' => -1,
-					'startDate' => date('Y-m-d'),
+					'startDate' => '',
 					'endDate' => date('Y-m-d'),
                 );
 			}
 			$db = new Section_Model_DbTable_DbProduction();
-            $this->view->rs= $db->getAllProduct($search);
+            $this->view->rs= $db->getAllProduction($search);
 			
 		}catch (Exception $e){
 			Application_Form_FrmMessage::message("Application Error");
@@ -54,7 +52,7 @@ class Section_ProductionController extends Zend_Controller_Action
 				$sms="INSERT_SUCCESS";
 				$_dbmodel = new Section_Model_DbTable_DbProduction();
 			    $_dbmodel->addProduction($_data);
-				Application_Form_FrmMessage::Sucessfull($sms,"/section/product");
+				Application_Form_FrmMessage::Sucessfull($sms,"/section/production");
 			}catch(Exception $e){
 				Application_Form_FrmMessage::message("INSERT_FAIL");
 				Application_Model_DbTable_DbUserLog::writeMessageError($e->getMessage());

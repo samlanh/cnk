@@ -21,8 +21,6 @@ class Section_ProductController extends Zend_Controller_Action
                     'advSearch' => '',
                     'proType' => '',
 					'status' => -1,
-					'startDate' => date('Y-m-d'),
-					'endDate' => date('Y-m-d'),
                 );
 			}
 			$db = new Section_Model_DbTable_DbProduct();

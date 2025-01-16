@@ -1,10 +1,8 @@
  <?php
 	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
-	$pageTitle = $tr->translate("CREATE_PRODUCTION");
-	
+	$pageTitle = $tr->translate("ផលិតផល");	
 	$this->headTitle($pageTitle);
 	echo $this->headTitle();
-	
 	$frm = $this->frm;
 	
 ?>
@@ -41,7 +39,7 @@
 							<div class="mb-3 form-input materialSetting">
 								<table id="materialTable" class="table table-striped">
 									<thead>
-										<tr class="table-active">
+										<tr class="table-info">
 											<th>ល.រ</th>
 											<th>ឈ្មោះ</th>
 											<th>ចំនួន</th>
@@ -52,7 +50,7 @@
 										<!-- Rows will be added dynamically -->
 									</tbody>
 								</table>
-								<input type="hidden" id="selectedIndexes" name="selectedIndexes" value="" />
+								<input type="text" id="selectedIndexes" name="selectedIndexes" value="" />
 							</div>
 							<button type="submit" class="btn btn-primary mt-3 btn-rounded btn-block"><?php echo $tr->translate('SAVE');?></button>
 						</form>
@@ -125,7 +123,7 @@ function addRow() {
 				placeholder="ចំនួន" 
 				value="1" 
 				min="1" 
-				style="width: 150px; font-weight: bold; color: red;"  />
+				style="width: 100%; font-weight: bold; color: red;"  />
           </td>
           <td>
 		  	<i class="deleteRow fa-solid fa-trash"></i>
