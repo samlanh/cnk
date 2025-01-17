@@ -1,0 +1,261 @@
+ <?php
+	$tr=Application_Form_FrmLanguages::getCurrentlanguage();
+	$pageTitle = $tr->translate("របាយការណ៍ទំនិញ");
+	$this->headTitle($pageTitle);
+	echo $this->headTitle();
+	$formSearch = $this->formSearch;
+
+	//print_r($this->rs);
+	$baseUrl = Application_Form_FrmMessage::getUrl("/");
+?>
+
+</style>
+	<link rel="stylesheet" type="text/css" media="print" href="<?php echo $baseUrl."templates/"; ?>assets/css/styleprint.css">
+	<div class="page-content">
+		<div class="container"> 
+			<div class="serach-area"> 
+				<div class="filter-area m-0">
+					<!-- <div>
+						<h5><?php echo $pageTitle;?></h5>
+					</div> -->
+					<a href="javascript:void(0);" class="filter-btn bg-skyblue light" data-bs-toggle="modal" data-bs-target="#basicModal">
+						<i class="text-primary fa fa-filter "></i>
+					</a>
+					<a onclick="doPrintProfle('divPrint');"  href="#" class="filter-btn bg-orange light" >
+						<i class="text-primary fa fa-print "></i>
+					</a>
+					
+				</div>
+
+				<div style="min-height:22cm; margin:0 auto;">
+					<div id="divPrint">
+						<table style="background:#fff;width:90%; margin: 0 auto;white-space: nowrap;width: 100%; font-family:'Times New Roman','Khmer OS Battambang'; 	color: black;">
+							<tr>
+								<td></td>
+							</tr>
+							<tr>
+								<td width="15%" align="center">
+								</td>
+								<td align="center" width="70%">
+									<span ><?php echo $tr->translate('របាយការណ៍ទំនិញ');?></span><br>
+									<span style="font-size: 12px; "><?php if(!empty($this->search['startDate'])){?><?php echo date("d-M-Y",strtotime($this->search['startDate']));?> <?php echo $tr->translate('TO');?> <?php echo date("d-M-Y",strtotime($this->search['endDate']));}?></span>
+								</td>
+								<td width="15%" align="center">
+								</td>
+							</tr>
+							<tr>
+								<td></td>
+							</tr>
+								<link rel="stylesheet" type="text/css" media="print" href="<?php echo $baseUrl."templates/"; ?>assets/css/styleprint.css">
+								<style>
+									.style{
+										line-height: 20px;font-size: 11px !important;
+										font-family: 'Times New Roman','Khmer OS Battambang';
+									}
+									.center{text-align: center !important;}
+									table.content-data{
+										border-collapse:collapse;
+										border:1px solid #000 !important; 
+										font-size:8px;
+										width:100%;
+									}
+									table.content-data thead tr.style {
+										line-height: 25px; 
+										font-size:10px !important; 
+										padding:1px 0px; 
+										white-space: nowrap;
+										height: 22px; 
+										background: #c1d0f3;
+										font-weight:600;
+										color: black;
+									}
+									
+									table tr td{
+										padding:0px 1px;
+									}
+									
+									td.centerText{
+										text-align: center;
+									}
+									
+									table.content-data tr td{
+										padding: 2px;
+										border:1px solid #000 !important; 
+									}	
+									.nowrap{white-space:nowrap;}
+									.wrapcontent{width:300px;white-space:normal;}
+									.smallwrap{width: 150px;white-space:normal;}
+
+									@media screen and (max-width: 768px) {
+										.content-data {
+											width: 100%;
+										}
+
+										.content-data thead {
+											display: none;
+										}
+
+										.content-data tr {
+											display: block;
+											margin-bottom: 10px;
+											border-bottom: 1px solid #adadad;
+										}
+
+										.content-data td {
+											display: flex;
+											justify-content: space-between;
+											padding: 8px;
+										}
+
+										.content-data td::before {
+											content: attr(data-label);
+											font-weight: bold;
+											margin-right: 10px;
+											color: #555;
+										}
+									}
+									@media print{
+										@page{
+											margin:0.7cm;
+											page-break-before: avoid;
+											-webkit-transform: scale(0.5);  /* Chrome, Safari 3.1+  */
+											-moz-transform: scale(0.5);  /* Firefox 3.5-15 */
+											-ms-transform: scale(0.5);   /* IE 9 */
+											-o-transform: scale(0.5);    /* Opera 10.50-12.00 */
+											transform: scale(0.5);
+											size: A4 landscape;
+										}
+									}
+								</style>
+								<tr>
+								<td colspan="3" id="exportExcel">
+									<table class="content-data" cellpadding="5" border="1" >
+										<thead>
+											<tr class="style" align="center">
+												<td scope="col" ><?php echo $tr->translate("ល.រ");?></td>
+												<td scope="col" ><?php echo $tr->translate("ឈ្មោះទំនិញ");?></td>
+												<td scope="col" ><?php echo $tr->translate("ប្រភេទ");?></td>
+												<td scope="col" ><?php echo $tr->translate("ស្តុកចូល");?></td>
+												<td scope="col" ><?php echo $tr->translate("ស្តុកចេញ");?></td>
+												<td scope="col" ><?php echo $tr->translate("ស្តុកជាក់ស្តែង");?></td>
+												<td scope="col" ><?php echo $tr->translate("ថ្លៃដើម");?></td>
+												<td scope="col" ><?php echo $tr->translate("តម្លៃសរុប");?></td>
+												<td scope="col" ><?php echo $tr->translate("អ្នកប្រើប្រាស់");?></td>
+											</tr>
+										</thead>
+										<?php
+											$i=0;
+											if(!empty($this->rs))foreach ($this->rs AS $rs) {
+											
+											 $i++;
+										?>
+											<tr class="style hover" align="left" style="<?php if($rs['status']==0){echo'background:#fceeee;';}?>">
+												<td data-label="<?php echo $tr->translate("NUM");?>" align="center"><?php echo $i; ?></td>
+												<td data-label="<?php echo $tr->translate("ឈ្មោះទំនិញ");?>" ><?php echo $rs['productName'];?></td>
+												<td data-label="<?php echo $tr->translate("ប្រភេទ");?>" ><?php echo $rs['Type'];?></td>
+												<td data-label="<?php echo $tr->translate("ទិញចូល");?>" ><?php echo $rs['productionQty'];?></td>
+												<td data-label="<?php echo $tr->translate("លក់ចេញ");?>" ><?php echo $rs['materialUageQty'];?></td>
+												<td data-label="<?php echo $tr->translate("ស្តុកជាក់ស្តែង");?>" ><?php echo number_format($rs['outstandingQty'],2)." ".$rs['measure'];?></td>
+												<td data-label="<?php echo $tr->translate("ថ្លៃដើម");?>" >$<?php echo number_format($rs['costPrice'],2) ;?></td>
+												<td data-label="<?php echo $tr->translate("តម្លៃសរុប");?>" >$<?php echo number_format(($rs['outstandingQty']*$rs['costPrice']),2) ;?></td>
+												<td data-label="<?php echo $tr->translate("អ្នកប្រើប្រាស់");?>" ><?php echo $rs['userName'];?></td>
+											</tr>
+											<?php } ?>	 
+									</table>	
+								</td>
+							</tr>
+							<tr>
+								<td align="center" colspan="3"></td>
+							</tr>
+							<tr>
+								<td colspan="3" >
+									<table width="100%">
+										<tr align="center" style="font-size:12px; height: 20px;line-height: 30px;" align="center">
+											<td><?php echo $tr->translate('BUYER');?> </td>
+											<td><?php echo $tr->translate('MANAGER');?> </td>
+											<td><?php echo $tr->translate('ASSISTANT');?> </td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+						</table>
+					</div>		
+				</div>
+				 
+			</div>    
+		</div>
+	</div>
+
+	<div class="modal modal-bottom fade" id="basicModal"  aria-modal="true" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"><?php echo $tr->translate("SEARCH");?></h5>
+					<button class="btn-close" data-bs-dismiss="modal">
+						<i class="fa-solid fa-xmark"></i>
+					</button>
+				</div>
+				<form id="form-search" method="GET">
+					<div class="modal-body">
+						<div class="basic-form">
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-search"></i>
+								</span>
+								<?php echo $formSearch->getElement('advSearch');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+									<i class="fa-solid fa-user"></i>
+								</span>
+								<?php echo $formSearch->getElement('proType');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('startDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-calendar-days"></i>
+								</span>
+								<?php echo $formSearch->getElement('endDate');?>
+							</div>
+							<div class="mb-1 form-input">
+								<span class="input-icon">
+								   <i class="fa fa-list-check"></i>
+								</span>
+								<?php echo $formSearch->getElement('status');?>
+							</div>	
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-danger light" data-bs-dismiss="modal"><?php echo $tr->translate("CLOSE");?></button>
+						<button type="submit" class="btn btn-sm btn-primary" data-bs-dismiss="modal" name="btn-search" ><?php echo $tr->translate("SEARCH");?></button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+<script>
+
+$( document ).ready(function() {
+    $('.classHeadTitle').html("<?php echo $pageTitle;?>");
+});
+
+function doPrintProfle(divId) {
+    // Get the content of the specified div
+    var content = document.getElementById(divId).innerHTML;
+	var screenWidth = window.screen.width;
+    var screenHeight = window.screen.height;
+      // Open a new window with flexible size
+     var myWindow = window.open('', '', `width=${screenWidth},height=${screenHeight},top=0,left=0`);
+    myWindow.document.write(content);
+	myWindow.document.close();
+    myWindow.print();
+    myWindow.close();
+}
+
+</script>

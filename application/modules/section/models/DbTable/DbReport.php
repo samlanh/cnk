@@ -137,4 +137,52 @@
 		return $db->fetchAll($sql . $where . $order);
 	}
 	
+	function getAllProduct($search){
+		$db = $this->getAdapter();
+
+		$startdatetimestamp = strtotime($search['startDate']);
+		$startDateFormat = date('Y-m-d', $startdatetimestamp);
+
+		$enddatetimestamp = strtotime($search['endDate']);
+		$endDateFormat = date('Y-m-d', $enddatetimestamp);
+		//date material
+		$startDateMt = (empty($startDateFormat)) ? '1' : "vm.productionDate >= '" . $startDateFormat . " 00:00:00'";
+		$endDateMt = (empty($endDateFormat)) ? '1' : "vm.productionDate <= '" . $endDateFormat . " 23:59:59'";
+		$whereMaterialDate= " AND " . $startDateMt . " AND " . $endDateMt;
+
+		//date prodution
+		$startDateVp = (empty($startDateFormat)) ? '1' : "vp.productionDate >= '" . $startDateFormat . " 00:00:00'";
+		$endDateVp = (empty($endDateFormat)) ? '1' : "vp.productionDate <= '" . $endDateFormat . " 23:59:59'";
+		$whereProductionDate= " AND " . $startDateVp . " AND " . $endDateVp;
+
+		$sql = "SELECT p.*
+			,CASE
+				WHEN p.proType=1 THEN 'ទំនិញលក់'
+				WHEN p.proType=2 THEN 'វត្ថុធាតុដើម'
+			END as Type
+			,(SELECT u.user_name FROM `rms_users` AS u WHERE u.id = p.userId) AS userName
+			,SUM( vm.qtyProduction) AS  materialUageQty
+  			,SUM(vp.productionQty) AS productionQty
+		 FROM `ie_product` AS p 
+			LEFT JOIN `v_material_production` AS vm ON vm.materialId=p.id ".$whereMaterialDate."
+			LEFT JOIN  `v_production` AS vp ON vp.productId=p.id ".$whereProductionDate."
+		WHERE 1 ";
+
+		$where = '';
+		
+		if(!empty($search['advSearch'])){
+			$s_where = array();
+			$s_search = addslashes(trim($search['advSearch']));
+			$s_where[] = " p.productName LIKE '%{$s_search}%'";
+			$where .=' AND ( '.implode(' OR ',$s_where).')';
+		}
+		if(!empty($search['proType'])){
+			$where .=' AND p.proType = '.$search['proType'];
+		}
+		if($search['status'] > -1 ){
+			$where .=' AND p.status= '.$search['status'];
+		}
+		$order = ' GROUP BY p.id ORDER BY p.proType,p.id DESC  ';
+		return $db->fetchAll($sql.$where.$order);
+	}
 }
