@@ -153,8 +153,8 @@
 												<td data-label="<?php echo $tr->translate("NUM");?>" align="center"><?php echo $i; ?></td>
 												<td data-label="<?php echo $tr->translate("ឈ្មោះទំនិញ");?>" ><?php echo $rs['productName'];?></td>
 												<td data-label="<?php echo $tr->translate("ប្រភេទ");?>" ><?php echo $rs['Type'];?></td>
-												<td data-label="<?php echo $tr->translate("ទិញចូល");?>" ><?php echo $rs['productionQty'];?></td>
-												<td data-label="<?php echo $tr->translate("លក់ចេញ");?>" ><?php echo $rs['materialUageQty'];?></td>
+												<td data-label="<?php echo $tr->translate("ទិញចូល");?>" ><?php echo $rs['QtyIn'];?></td>
+												<td data-label="<?php echo $tr->translate("លក់ចេញ");?>" ><?php echo $rs['qtyOut'];?></td>
 												<td data-label="<?php echo $tr->translate("ស្តុកជាក់ស្តែង");?>" ><?php echo number_format($rs['outstandingQty'],2)." ".$rs['measure'];?></td>
 												<td data-label="<?php echo $tr->translate("ថ្លៃដើម");?>" >$<?php echo number_format($rs['costPrice'],2) ;?></td>
 												<td data-label="<?php echo $tr->translate("តម្លៃសរុប");?>" >$<?php echo number_format(($rs['outstandingQty']*$rs['costPrice']),2) ;?></td>
