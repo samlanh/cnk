@@ -154,6 +154,16 @@
 		$startDateVp = (empty($startDateFormat)) ? '1' : "vp.productionDate >= '" . $startDateFormat . " 00:00:00'";
 		$endDateVp = (empty($endDateFormat)) ? '1' : "vp.productionDate <= '" . $endDateFormat . " 23:59:59'";
 		$whereProductionDate= " AND " . $startDateVp . " AND " . $endDateVp;
+		//date purchase
+		$startDateVpc = (empty($startDateFormat)) ? '1' : "vpc.purchaseDate >= '" . $startDateFormat . " 00:00:00'";
+		$endDateVpc = (empty($endDateFormat)) ? '1' : "vpc.purchaseDate <= '" . $endDateFormat . " 23:59:59'";
+		$wherePurchaseDate= " AND " . $startDateVpc . " AND " . $endDateVpc;
+		//date sale
+		$startDateVs = (empty($startDateFormat)) ? '1' : "vs.saleDate >= '" . $startDateFormat . " 00:00:00'";
+		$endDateVs = (empty($endDateFormat)) ? '1' : "vs.saleDate <= '" . $endDateFormat . " 23:59:59'";
+		$whereSaleDate= " AND " . $startDateVs . " AND " . $endDateVs;
+		
+
 
 		$sql = "SELECT p.*
 			,CASE
@@ -161,11 +171,22 @@
 				WHEN p.proType=2 THEN 'វត្ថុធាតុដើម'
 			END as Type
 			,(SELECT u.user_name FROM `rms_users` AS u WHERE u.id = p.userId) AS userName
-			,SUM( vm.qtyProduction) AS  materialUageQty
-  			,SUM(vp.productionQty) AS productionQty
+			,SUM(CASE 
+				WHEN p.proType = 2 THEN vpc.purchaseQty 
+				WHEN p.proType = 1 THEN vp.productionQty 
+				ELSE 0
+			END) AS QtyIn
+			,SUM(CASE 
+				WHEN p.proType = 2 THEN vm.qtyProduction 
+				WHEN p.proType = 1 THEN vs.saleQty      
+				ELSE 0
+			END) AS qtyOut
+
 		 FROM `ie_product` AS p 
 			LEFT JOIN `v_material_production` AS vm ON vm.materialId=p.id ".$whereMaterialDate."
 			LEFT JOIN  `v_production` AS vp ON vp.productId=p.id ".$whereProductionDate."
+			LEFT JOIN  `v_purchase` AS vpc ON vpc.productId=p.id ".$wherePurchaseDate."
+			LEFT JOIN  `v_sale` AS vs ON vs.productId=p.id ".$whereSaleDate."
 		WHERE 1 ";
 
 		$where = '';
